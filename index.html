@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Logística Express | Fase 1</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <div id="pantalla-login" class="body-login">
+        <div class="container" id="container">
+            <div class="form-container sign-up-container">
+                <div class="form-content">
+                    <h1>Crear Cuenta</h1>
+                    <span style="margin-bottom: 15px;">Complete el formulario de registro</span>
+                    <input type="text" id="reg-usuario" placeholder="Nombre de Usuario (Ej. davis_st)" />
+                    <input type="password" id="reg-pass" placeholder="Contraseña Segura" />
+                    
+                    <label style="align-self: flex-start; margin-top: 10px; font-size: 0.8rem; font-weight: bold;">Tipo de Perfil:</label>
+                    <div style="width: 100%; margin-bottom: 10px;">
+                        <select id="reg-rol">
+                            <option value="cliente">Cliente (Usuario Final)</option>
+                            <option value="delivery">Personal de Logística (Delivery)</option>
+                        </select>
+                    </div>
+
+                    <div id="contenedor-direccion-registro" style="width: 100%;">
+                        <label style="font-size: 0.7rem; color: #666; display: block; text-align: left;">Ubicación Geográfica:</label>
+                        <div class="address-grid">
+                            <select id="sel-depto"><option value="">Seleccionar Departamento</option></select>
+                            <select id="sel-muni" disabled><option value="">Seleccionar Municipio</option></select>
+                            <select id="sel-casa" disabled><option value="">Número de Casa</option></select>
+                        </div>
+                    </div>
+                    <button id="btn-registro-submit">Registrarse</button>
+                </div>
+            </div>
+
+            <div class="form-container sign-in-container">
+                <div class="form-content">
+                    <h1>Bienvenido</h1>
+                    <span style="margin-bottom: 15px;">Acceso a la Plataforma</span>
+                    <input type="text" id="login-usuario" placeholder="Nombre de Usuario" />
+                    <input type="password" id="login-pass" placeholder="Contraseña" />
+                    <button id="btn-login-submit">Ingresar</button>
+                </div>
+            </div>
+
+            <div class="overlay-container">
+                <div class="overlay">
+                    <div class="overlay-panel overlay-left">
+                        <h1>Acceso Usuarios</h1>
+                        <p>Si ya dispone de una cuenta, ingrese sus credenciales aquí.</p>
+                        <button class="ghost" id="signIn">Iniciar Sesión</button>
+                    </div>
+                    <div class="overlay-panel overlay-right">
+                        <h1>Logística Express</h1>
+                        <p>Fase 1: Cola de Prioridad e Historial en Vivo.</p>
+                        <button class="ghost" id="signUp">Nuevo Registro</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="pantalla-dashboard" style="display: none;">
+        <nav class="sidebar">
+            <h2 id="titulo-rol">Panel de Control</h2>
+            <div style="margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">
+                <p id="user-display" style="color: var(--text-muted); font-size: 0.8em; margin:0;"></p>
+                <p id="address-display" style="color: var(--primary); font-weight: bold; font-size: 0.85em; margin-top: 5px;"></p>
+            </div>
+            
+            <div id="menu-cliente">
+                <button onclick="cambiarVista('vista-pedidos')" class="btn-nav">Realizar Pedido</button>
+                <button onclick="cambiarVista('vista-rastreo-cliente')" class="btn-nav">Estado del Servicio</button>
+                <button onclick="cambiarVista('vista-historial-cliente')" class="btn-nav">Mi Historial</button>
+            </div>
+
+            <div id="menu-delivery" style="display: none;">
+                <button onclick="cambiarVista('vista-panel-delivery')" class="btn-nav">Centro de Operaciones</button>
+                <button onclick="cambiarVista('vista-historial-delivery')" class="btn-nav">Mis Entregas</button>
+            </div>
+
+            <button id="btn-logout" class="btn-nav" style="margin-top:auto; color:#ef4444;">Cerrar Sesión</button>
+        </nav>
+
+        <main class="contenido">
+            <section id="vista-pedidos" class="vista activa">
+                <div class="grid-2">
+                    <div class="panel">
+                        <h2 style="color: var(--primary);">Menú Fijo</h2>
+                        <select id="select-restaurante"></select>
+                        <div id="contenedor-menu" style="margin-top: 20px;"></div>
+                    </div>
+                    <div class="panel">
+                        <h2>Orden en Curso</h2>
+                        <div id="contenedor-carrito"><p>No hay elementos seleccionados.</p></div>
+                        <button id="btn-abrir-pago" class="btn-accion btn-naranja" style="margin-top: 15px;">Procesar Orden</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="vista-rastreo-cliente" class="vista" style="display: none;">
+                <div class="panel">
+                    <h2>Rastreo de Pedido en Vivo</h2>
+                    <div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 10px;">
+                        <h1 id="tracking-icono" style="font-size: 4em; margin: 10px 0;">⏳</h1>
+                        <h2 id="tracking-texto">Cargando datos...</h2>
+                        <p id="tracking-desc" style="color: #666; font-size: 1.1em;">Verificando conexión...</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="vista-historial-cliente" class="vista" style="display: none;">
+                <div class="panel">
+                    <h2>Mi Historial de Pedidos</h2>
+                    <div id="lista-historial-cliente" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;"></div>
+                </div>
+            </section>
+
+            <section id="vista-panel-delivery" class="vista" style="display: none;">
+                <div class="panel">
+                    <h2>Cola de Despacho (TAD Cola de Prioridad)</h2>
+                    <p>Las órdenes con Servicio Express (VIP) escalan automáticamente en la lista.</p>
+                    
+                    <button id="btn-atender-siguiente" class="btn-accion btn-naranja" style="margin-bottom: 20px;">
+                        Atender Siguiente Orden
+                    </button>
+                    
+                    <div id="lista-pedidos-unica" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #dee2e6; min-height: 150px; display: flex; flex-direction: column; gap: 10px;">
+                        </div>
+                </div>
+            </section>
+
+            <section id="vista-historial-delivery" class="vista" style="display: none;">
+                <div class="panel">
+                    <h2>Mis Entregas Realizadas</h2>
+                    <div id="lista-historial-delivery" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="modal-pago" class="modal-oculto">
+        <div class="modal-contenido">
+            <h2>Pasarela de Pago</h2>
+            <p>Confirmar envío a: <strong id="modal-direccion-confirm">...</strong></p>
+            <div style="display: flex; gap: 10px; justify-content: center; margin: 20px 0;">
+                <button class="btn-accion" id="btn-pago-efectivo" style="background: #10b981;">Efectivo</button>
+                <button class="btn-accion" id="btn-pago-tarjeta" style="background: #3b82f6; color: white;">Tarjeta</button>
+            </div>
+            <div style="margin-bottom: 20px; text-align: left; background: #fffaf0; border: 1px solid #f59e0b; padding: 10px; border-radius: 8px;">
+                <label style="cursor: pointer; display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="check-vip"> 
+                    <span>Servicio Express VIP <b style="color: #dc2626; font-size: 1.1em;">(+$2.50)</b></span>
+                </label>
+            </div>
+            <button id="btn-cerrar-modal" class="btn-outline">Cancelar Operación</button>
+        </div>
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
