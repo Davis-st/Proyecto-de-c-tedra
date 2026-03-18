@@ -1,6 +1,6 @@
 import { ColaPedidos } from './Estructuras/ColaPedidos.js';
 
-// --- CONFIGURACIÓN 12132223
+// --- CONFIGURACIÓN DE SUPABASE
 const SUPABASE_URL = 'https://nybdoaclmzdfqeaefgxx.supabase.co'; 
 const SUPABASE_KEY = 'sb_publishable_JIUJgw-34pVpDNE8yxdNlQ_xz3vSxzu';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -63,7 +63,7 @@ function configurarDashboardPorRol() {
     }
 }
 
-// --- 1. RASTREO AUTOMÁTICO (POLLING) ---
+// --- 1. RASTREO AUTOMÁTICO ---
 async function iniciarRastreoEnVivo() {
     const icono = document.getElementById('tracking-icono');
     const texto = document.getElementById('tracking-texto');
@@ -204,9 +204,8 @@ async function procesarPago(metodo) {
     
     if(error) return alert("Error al registrar en base de datos.");
 
-    // --- AQUÍ ESTÁ EL ARREGLO ---
+    
     cargarColaDeStorage(); // Sincronizamos con lo que el repartidor ya quitó
-    // ----------------------------
 
     const nuevoTicket = {
         db_id: data[0].id,
@@ -301,7 +300,7 @@ window.onload = () => {
         configurarDashboardPorRol();
     }
     
-    // Cargar selectores de dirección (Lógica rápida)
+    // Cargar selectores de dirección
     const selDepto = document.getElementById('sel-depto');
     for(let d in datosDirecciones) { let o = document.createElement('option'); o.value=d; o.textContent=d; selDepto.appendChild(o); }
     selDepto.addEventListener('change', () => {
