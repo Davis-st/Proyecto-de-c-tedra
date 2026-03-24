@@ -1,6 +1,6 @@
 import { ColaPedidos } from './Estructuras/ColaPedidos.js';
 
-// --- CONFIGURACIÓN DE SUPABASE ---PRUEBA DE GIT
+// --- CONFIGURACIÓN DE SUPABASE ---
 const SUPABASE_URL = 'https://nybdoaclmzdfqeaefgxx.supabase.co'; 
 const SUPABASE_KEY = 'sb_publishable_JIUJgw-34pVpDNE8yxdNlQ_xz3vSxzu';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
