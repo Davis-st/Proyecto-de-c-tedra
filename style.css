@@ -1,56 +1,212 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap');
 
 :root {
-    --bg-gradient: linear-gradient(135deg, #c3dcfc 0%, #e6efff 100%);
-    --primary: #3b82f6;
-    --success: #10b981;
-    --warning: #f59e0b;
-    --text-main: #333;
+    /* Fondo más vibrante y moderno para que el cristal resalte */
+    --bg-gradient: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 50%, #c2e9fb 100%);
+    --primary: rgba(59, 130, 246, 0.85); /* Azul con transparencia */
+    --success: rgba(16, 185, 129, 0.85);
+    --warning: rgba(245, 158, 11, 0.85);
+    --text-main: #2d3748;
+    
+    /* Variables para el efecto Cristal (Liquid Glass) */
+    --glass-bg: rgba(255, 255, 255, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.6);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
 }
 
-body { font-family: 'Nunito', sans-serif; background: var(--bg-gradient); color: var(--text-main); margin: 0; min-height: 100vh; }
+body { 
+    font-family: 'Nunito', sans-serif; 
+    background: var(--bg-gradient); 
+    background-attachment: fixed; /* Mantiene el fondo fijo al scrollear */
+    color: var(--text-main); 
+    margin: 0; 
+    min-height: 100vh; 
+}
 
 /* --- LOGIN SLIDING --- */
-.body-login { display: flex; justify-content: center; align-items: center; height: 100vh; background: #f6f5f7; }
-.container { background-color: #fff; border-radius: 20px; box-shadow: 0 14px 28px rgba(0,0,0,0.25); position: relative; overflow: hidden; width: 850px; max-width: 100%; min-height: 550px; }
+.body-login { 
+    display: flex; justify-content: center; align-items: center; 
+    height: 100vh; 
+    background: transparent; /* Quitado el color sólido para ver el fondo */
+}
+
+.container { 
+    background: var(--glass-bg); /* Efecto cristal */
+    backdrop-filter: blur(16px); /* El desenfoque clave del Liquid Glass */
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    border-radius: 24px; 
+    position: relative; 
+    overflow: hidden; 
+    width: 850px; 
+    max-width: 100%; 
+    min-height: 600px; /* Aumentado para que no se aplaste el formulario */
+}
+
 .form-container { position: absolute; top: 0; height: 100%; transition: all 0.6s ease-in-out; }
-.form-content { background-color: #ffffff; display: flex; flex-direction: column; padding: 0 50px; height: 100%; justify-content: center; text-align: center; }
-.sign-in-container { left: 0; width: 50%; z-index: 2; }
-.sign-up-container { left: 0; width: 50%; opacity: 0; z-index: 1; }
-.container.right-panel-active .sign-in-container { transform: translateX(100%); }
-.container.right-panel-active .sign-up-container { transform: translateX(100%); opacity: 1; z-index: 5; animation: show 0.6s; }
-@keyframes show { 0%, 49.99% { opacity: 0; z-index: 1; } 50%, 100% { opacity: 1; z-index: 5; } }
+
+.form-content { 
+    background-color: transparent; /* Debe ser transparente para ver el cristal */
+    display: flex; flex-direction: column; padding: 0 50px; 
+    height: 100%; justify-content: center; text-align: center; 
+}
+
+/* --- CORRECCIÓN DEL CRISTAL AMONTONADO --- */
+.sign-in-container { 
+    left: 0; width: 50%; z-index: 2; 
+    opacity: 1; 
+    transition: all 0.6s ease-in-out; 
+}
+
+.sign-up-container { 
+    left: 0; width: 50%; z-index: 1; 
+    opacity: 0; 
+    pointer-events: none; /* Evita clics fantasma */
+    transition: all 0.6s ease-in-out; 
+}
+
+.container.right-panel-active .sign-in-container { 
+    transform: translateX(100%); 
+    opacity: 0; /* Lo hacemos invisible al moverse */
+    pointer-events: none;
+}
+
+.container.right-panel-active .sign-up-container { 
+    transform: translateX(100%); 
+    opacity: 1; 
+    z-index: 5; 
+    pointer-events: auto; /* Reactiva los clics */
+    animation: show 0.6s; 
+}
+
+@keyframes show { 
+    0%, 49.99% { opacity: 0; z-index: 1; } 
+    50%, 100% { opacity: 1; z-index: 5; } 
+}
+
 .overlay-container { position: absolute; top: 0; left: 50%; width: 50%; height: 100%; overflow: hidden; transition: transform 0.6s ease-in-out; z-index: 100; }
 .container.right-panel-active .overlay-container { transform: translateX(-100%); }
-.overlay { background: linear-gradient(to right, #8b5cf6, #3b82f6); color: #ffffff; position: relative; left: -100%; height: 100%; width: 200%; transform: translateX(0); transition: transform 0.6s ease-in-out; }
+
+/* El panel que se mueve también tiene estilo cristal/gradiente */
+.overlay { 
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.9), rgba(59, 130, 246, 0.9)); 
+    backdrop-filter: blur(10px);
+    color: #ffffff; position: relative; left: -100%; height: 100%; width: 200%; 
+    transform: translateX(0); transition: transform 0.6s ease-in-out; 
+}
 .container.right-panel-active .overlay { transform: translateX(50%); }
-.overlay-panel { position: absolute; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 40px; text-align: center; top: 0; height: 100%; width: 50%; transform: translateX(0); transition: transform 0.6s ease-in-out; }
+
+.overlay-panel { 
+    position: absolute; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    padding: 0 40px; 
+    text-align: center; 
+    top: 0; 
+    height: 100%; 
+    width: 50%; 
+    box-sizing: border-box; /* <- ESTO ARREGLA EL CENTRADO HORIZONTAL */
+    transform: translateX(0); 
+    transition: transform 0.6s ease-in-out; 
+}
 .overlay-left { transform: translateX(-20%); }
 .container.right-panel-active .overlay-left { transform: translateX(0); }
 .overlay-right { right: 0; transform: translateX(0); }
 .container.right-panel-active .overlay-right { transform: translateX(20%); }
 
-h1 { font-weight: bold; margin: 0; }
+h1 { font-weight: 800; margin: 0; letter-spacing: -0.5px; }
 p { font-size: 14px; margin: 20px 0; }
-button { border-radius: 20px; border: 1px solid #3b82f6; background-color: #3b82f6; color: #ffffff; font-size: 12px; font-weight: bold; padding: 12px 45px; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+
+/* Botones estilo Cristal */
+button { 
+    border-radius: 20px; 
+    border: 1px solid var(--glass-border); 
+    background: var(--primary); 
+    backdrop-filter: blur(4px);
+    color: #ffffff; font-size: 13px; font-weight: 800; 
+    padding: 12px 45px; cursor: pointer; margin-top: 10px; transition: all 0.3s ease; 
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4); }
 button:active { transform: scale(0.95); }
-button.ghost { background-color: transparent; border-color: #ffffff; }
-input, select { background-color: #eee; border: none; padding: 12px; margin: 8px 0; width: 100%; border-radius: 8px; font-family: inherit; }
+button.ghost { background-color: rgba(255, 255, 255, 0.2); box-shadow: none; }
+
+/* Inputs estilo Cristal */
+input, select { 
+    background: rgba(255, 255, 255, 0.5); /* Semitransparente */
+    border: 1px solid rgba(255, 255, 255, 0.8); 
+    padding: 12px; margin: 8px 0; width: 100%; 
+    border-radius: 12px; font-family: inherit; 
+    box-sizing: border-box; /* Arregla el centrado de las cajas */
+    transition: all 0.3s;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+}
+input:focus, select:focus { outline: none; background: rgba(255, 255, 255, 0.8); border-color: #3b82f6; }
+
+/* Checkbox del VIP para que no se estire */
+input[type="checkbox"] {
+    width: auto;
+    margin: 0 10px 0 0;
+    transform: scale(1.3);
+    cursor: pointer;
+    box-shadow: none;
+}
+
 .address-grid { display: flex; flex-direction: column; gap: 5px; width: 100%; }
-.msg-error { color: red; font-size: 0.8rem; margin-top: 5px; min-height: 15px; }
 
 /* --- DASHBOARD --- */
 #pantalla-dashboard { display: flex; min-height: 100vh; padding: 20px; gap: 20px; box-sizing: border-box;}
-.sidebar { width: 250px; background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border-radius: 20px; padding: 30px 20px; display: flex; flex-direction: column; gap: 10px; }
-.btn-nav { background: transparent; border: none; padding: 10px; text-align: left; font-weight: bold; cursor: pointer; color: #333; }
-.btn-nav:hover { background: rgba(255,255,255,0.9); }
+
+/* Panel lateral (Sidebar) con Glassmorphism */
+.sidebar { 
+    width: 250px; 
+    background: var(--glass-bg); 
+    backdrop-filter: blur(16px); 
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    border-radius: 24px; padding: 30px 20px; 
+    display: flex; flex-direction: column; gap: 10px; 
+}
+
+.btn-nav { background: transparent; border: none; box-shadow: none; padding: 12px; text-align: left; font-weight: bold; cursor: pointer; color: var(--text-main); border-radius: 12px;}
+.btn-nav:hover { background: rgba(255,255,255,0.6); transform: none; box-shadow: none; }
+
 .contenido { flex: 1; }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.panel { background: rgba(255,255,255,0.9); padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+
+/* Paneles del Dashboard con Glassmorphism */
+.panel { 
+    background: var(--glass-bg); 
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    padding: 30px; border-radius: 24px; 
+    box-shadow: var(--glass-shadow); 
+}
+
+/* Modificación para las "tarjetitas" de menú y pedidos dentro de los paneles */
+.panel div[style*="background:#fff"], .panel div[style*="background:white"] {
+    background: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+    border-radius: 12px !important;
+}
 
 /* --- MODAL --- */
-.modal-oculto { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); justify-content: center; align-items: center; z-index: 1000; }
-.modal-contenido { background: white; padding: 30px; border-radius: 20px; width: 400px; text-align: center; }
+.modal-oculto { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 1000; }
+.modal-contenido { 
+    background: rgba(255, 255, 255, 0.85); 
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    padding: 30px; border-radius: 24px; width: 400px; text-align: center; 
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
 .btn-accion { width: 100%; }
-.btn-naranja { background: var(--warning); border-color: var(--warning); }
-.btn-outline { background: transparent; border: 1px solid red; color: red; margin-top: 10px; }
+.btn-naranja { background: var(--warning); }
+.btn-outline { background: transparent; border: 1px solid #ef4444; color: #ef4444; margin-top: 10px; box-shadow: none; }
+.btn-outline:hover { background: rgba(239, 68, 68, 0.1); }

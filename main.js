@@ -1,4 +1,6 @@
+// --- IMPORTACIÓN DE CLASES (AGREGACIÓN) ---
 import { ColaPedidos } from './Estructuras/ColaPedidos.js';
+import { Cliente, Repartidor } from './Estructuras/Usuarios.js';
 
 // --- CONFIGURACIÓN DE SUPABASE ---
 const SUPABASE_URL = 'https://nybdoaclmzdfqeaefgxx.supabase.co'; 
@@ -16,10 +18,10 @@ const menusPorRestaurante = {
     'Taquería El Pastor': [{n: "Orden Tacos al Pastor", p: 5.00}, {n: "Gringas de Res", p: 5.00}]
 };
 
-// --- VARIABLES GLOBALES ---
+// --- VARIABLES GLOBALES Y OBJETOS ---
 let usuarioLogueado = null; 
 let carritoLocal = [];
-let colaCentral = new ColaPedidos();
+const colaCentral = new ColaPedidos();
 let trackingInterval = null; 
 
 // --- PERSISTENCIA DE LA COLA ---
@@ -29,7 +31,7 @@ function guardarColaEnStorage() {
 
 function cargarColaDeStorage() {
     const data = localStorage.getItem('colaCentral');
-    if (data) colaCentral.items = JSON.parse(data);
+    if (data) colaCentral.cargarDesdeStorage(JSON.parse(data));
 }
 
 // --- GESTIÓN DE VISTAS ---
@@ -46,24 +48,17 @@ window.cambiarVista = (idVista) => {
 };
 
 function configurarDashboardPorRol() {
-    const menuCliente = document.getElementById('menu-cliente');
-    const menuDelivery = document.getElementById('menu-delivery');
-    const titulo = document.getElementById('titulo-rol');
-
-    if (usuarioLogueado.rol === 'delivery') {
-        titulo.textContent = "Panel de Operaciones";
-        menuCliente.style.display = 'none';
-        menuDelivery.style.display = 'block';
-        cambiarVista('vista-panel-delivery');
-    } else {
-        titulo.textContent = "Panel de Usuario";
-        menuCliente.style.display = 'block';
-        menuDelivery.style.display = 'none';
-        cambiarVista('vista-pedidos');
-    }
+    // POLIMORFISMO EN ACCIÓN: El objeto sabe qué mostrar
+    const config = usuarioLogueado.obtenerConfiguracionVista();
+    
+    document.getElementById('titulo-rol').textContent = config.titulo;
+    document.getElementById('menu-cliente').style.display = config.menuCliente;
+    document.getElementById('menu-delivery').style.display = config.menuDelivery;
+    
+    cambiarVista(config.vistaInicial);
 }
 
-// --- 1. RASTREO AUTOMÁTICO ---
+// --- RASTREO AUTOMÁTICO ---
 async function iniciarRastreoEnVivo() {
     const icono = document.getElementById('tracking-icono');
     const texto = document.getElementById('tracking-texto');
@@ -75,7 +70,7 @@ async function iniciarRastreoEnVivo() {
     trackingInterval = setInterval(async () => {
         const { data, error } = await supabase.from('historialpedidos')
             .select('*')
-            .eq('cliente', usuarioLogueado.usuario)
+            .eq('cliente', usuarioLogueado.usuario) // Usamos el getter
             .order('id', { ascending: false })
             .limit(1);
 
@@ -96,7 +91,7 @@ async function iniciarRastreoEnVivo() {
     }, 3000);
 }
 
-// --- 2. CARGA DE HISTORIALES DESDE BD ---
+// --- CARGA DE HISTORIALES DESDE BD ---
 async function cargarHistorialCliente() {
     const contenedor = document.getElementById('lista-historial-cliente');
     contenedor.innerHTML = "<p>Cargando datos...</p>";
@@ -133,7 +128,7 @@ async function cargarHistorialDelivery() {
     `).join('');
 }
 
-// --- 3. PANEL REPARTIDOR (COLA) ---
+// --- PANEL REPARTIDOR (COLA) ---
 function renderizarPanelDelivery() {
     cargarColaDeStorage();
     const divUnico = document.getElementById('lista-pedidos-unica');
@@ -166,7 +161,6 @@ if(btnAtender) {
         let ticketSale = colaCentral.desencolar();
         guardarColaEnStorage();
         
-        // ACTUALIZAR BD
         await supabase.from('historialpedidos')
             .update({ estado: 'Entregado', repartidor: usuarioLogueado.usuario })
             .eq('id', ticketSale.db_id);
@@ -176,7 +170,7 @@ if(btnAtender) {
     });
 }
 
-// --- 4. LÓGICA DE COMPRA ---
+// --- LÓGICA DE COMPRA ---
 window.agregarAlCarrito = (nombre) => {
     carritoLocal.push(nombre);
     document.getElementById('contenedor-carrito').innerHTML = carritoLocal.map(p => `<div>• ${p}</div>`).join("");
@@ -188,11 +182,11 @@ document.getElementById('btn-abrir-pago').addEventListener('click', () => {
     document.getElementById('modal-direccion-confirm').textContent = usuarioLogueado.direccion;
 });
 document.getElementById('btn-cerrar-modal').addEventListener('click', () => document.getElementById('modal-pago').style.display = 'none');
+
 async function procesarPago(metodo) {
     const isVip = document.getElementById('check-vip').checked;
     const restId = document.getElementById('select-restaurante').value;
     
-    // 1. GUARDAR EN BD PRIMERO
     const { data, error } = await supabase.from('historialpedidos').insert([{
         cliente: usuarioLogueado.usuario,
         restaurante: restId,
@@ -204,8 +198,7 @@ async function procesarPago(metodo) {
     
     if(error) return alert("Error al registrar en base de datos.");
 
-    
-    cargarColaDeStorage(); // Sincronizamos con lo que el repartidor ya quitó
+    cargarColaDeStorage(); 
 
     const nuevoTicket = {
         db_id: data[0].id,
@@ -224,13 +217,12 @@ async function procesarPago(metodo) {
     
     alert("Pedido procesado.");
     cambiarVista('vista-rastreo-cliente');
-
 }
 
 document.getElementById('btn-pago-efectivo').addEventListener('click', () => procesarPago('Efectivo'));
 document.getElementById('btn-pago-tarjeta').addEventListener('click', () => procesarPago('Tarjeta'));
 
-// --- 5. SISTEMA DE LOGIN Y REGISTRO (CON MINÚSCULAS) ---
+// --- SISTEMA DE LOGIN Y REGISTRO ---
 document.getElementById('btn-registro-submit').addEventListener('click', async () => {
     const usuario = document.getElementById('reg-usuario').value;
     const pass = document.getElementById('reg-pass').value;
@@ -257,8 +249,21 @@ document.getElementById('btn-login-submit').addEventListener('click', async () =
         .select('*').eq('usuario', usuario).eq('password', pass);
     
     if(data && data.length > 0) {
-        usuarioLogueado = data[0]; 
-        localStorage.setItem('sesionActiva', JSON.stringify(usuarioLogueado));
+        let datosBd = data[0];
+        
+        // INSTANCIACIÓN DE OBJETOS SEGÚN SU CLASE
+        if (datosBd.rol === 'cliente') {
+            usuarioLogueado = new Cliente(datosBd.usuario, datosBd.direccion);
+        } else {
+            usuarioLogueado = new Repartidor(datosBd.usuario);
+        }
+
+        // Guardamos solo los datos 
+        localStorage.setItem('sesionActiva', JSON.stringify({
+            usuario: usuarioLogueado.usuario,
+            rol: usuarioLogueado.rol,
+            direccion: usuarioLogueado.direccion
+        }));
         location.reload(); 
     } else {
         alert("Usuario o contraseña incorrectos.");
@@ -287,15 +292,37 @@ function cargarMenuFijo(id) {
         </div>
     `).join('');
 }
+// --- LÓGICA PARA OCULTAR DIRECCIÓN SI ES DELIVERY ---
+const selectorRol = document.getElementById('reg-rol');
+const contenedorDireccion = document.getElementById('contenedor-direccion-registro');
 
+if(selectorRol && contenedorDireccion) {
+    selectorRol.addEventListener('change', (evento) => {
+        if(evento.target.value === 'delivery') {
+            // Oculta los selectores de municipio/departamento
+            contenedorDireccion.style.display = 'none'; 
+        } else {
+            // Los vuelve a mostrar si regresa a "Cliente"
+            contenedorDireccion.style.display = 'block'; 
+        }
+    });
+}
 window.onload = () => {
     const sesionGuardada = localStorage.getItem('sesionActiva');
     if (sesionGuardada) {
-        usuarioLogueado = JSON.parse(sesionGuardada);
+        let datosAnteriores = JSON.parse(sesionGuardada);
+        // Reconstruimos el objeto con su clase
+        if (datosAnteriores.rol === 'cliente') {
+            usuarioLogueado = new Cliente(datosAnteriores.usuario, datosAnteriores.direccion);
+        } else {
+            usuarioLogueado = new Repartidor(datosAnteriores.usuario);
+        }
+
         document.getElementById('pantalla-login').style.display = 'none';
         document.getElementById('pantalla-dashboard').style.display = 'flex';
         document.getElementById('user-display').textContent = "Usuario: " + usuarioLogueado.usuario;
         document.getElementById('address-display').textContent = usuarioLogueado.direccion;
+        
         inicializarMenu();
         configurarDashboardPorRol();
     }
@@ -320,17 +347,13 @@ document.getElementById('btn-logout').addEventListener('click', () => {
     location.reload(); 
 });
 
-// --- LÓGICA DE ANIMACIÓN DEL LOGIN (SLIDE) ---
+//animacion
 const signUpBtn = document.getElementById('signUp');
 const signInBtn = document.getElementById('signIn');
 const container = document.getElementById('container');
 
-if(signUpBtn && signInBtn && container) {
-    signUpBtn.addEventListener('click', () => {
-        container.classList.add("right-panel-active");
-    });
-
-    signInBtn.addEventListener('click', () => {
-        container.classList.remove("right-panel-active");
-    });
+if(signUpBtn && signInBtn && container) 
+ {
+    signUpBtn.addEventListener('click', () => container.classList.add("right-panel-active"));
+    signInBtn.addEventListener('click', () => container.classList.remove("right-panel-active"));
 }
