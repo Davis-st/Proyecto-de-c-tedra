@@ -1,28 +1,38 @@
-// --- IMPORTACIÓN DE CLASES (AGREGACIÓN) ---
+// IMPORTACIÓN DE CLASES
 import { ColaPedidos } from './Estructuras/ColaPedidos.js';
 import { Cliente, Repartidor } from './Estructuras/Usuarios.js';
 
-// --- CONFIGURACIÓN DE SUPABASE ---
+//  CONFIGURACIÓN DE SUPABASE 
 const SUPABASE_URL = 'https://nybdoaclmzdfqeaefgxx.supabase.co'; 
 const SUPABASE_KEY = 'sb_publishable_JIUJgw-34pVpDNE8yxdNlQ_xz3vSxzu';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ESTRUCTURAS DE DATOS Y ESTADO GLOBAL 
+const colaCentral = new ColaPedidos();
+let usuarioLogueado = null; 
+let carritoLocal = [];
+let trackingInterval = null; 
+
+// CATÁLOGO DE COMIDAS
+const menusPorRestaurante = {
+    'Pizzeria La Toscana': [
+        {n: "Pizza Cuatro Quesos", p: 12.00, img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500&q=80"}, 
+        {n: "Pizza Pepperoni", p: 10.50, img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=500&q=80"}
+    ], 
+    'Burger House Gourmet': [
+        {n: "Hamburguesa Doble Carne", p: 6.50, img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=80"}, 
+        {n: "Papas Fritas", p: 2.50, img: "https://images.unsplash.com/photo-1576107232684-1279f390859f?w=500&q=80"}
+    ],
+    'Taquería El Pastor': [
+        {n: "Orden Tacos al Pastor", p: 5.00, img: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=500&q=80"}, 
+        {n: "Gringas de Res", p: 5.00, img: "https://i.pinimg.com/736x/bd/1e/b9/bd1eb90a564099ae22ef5acea3d9fbb0.jpg"}
+    ]
+};
 
 const datosDirecciones = {
     "San Salvador": { "San Salvador": 10, "Soyapango": 10 },
     "La Libertad": { "Santa Tecla": 10, "Antiguo Cuscatlán": 10 }
 };
-
-const menusPorRestaurante = {
-    'Pizzeria La Toscana': [{n: "Pizza Cuatro Quesos", p: 12.00}, {n: "Pizza Pepperoni", p: 10.50}], 
-    'Burger House Gourmet': [{n: "Hamburguesa Doble Carne", p: 6.50}, {n: "Papas Fritas", p: 2.50}],
-    'Taquería El Pastor': [{n: "Orden Tacos al Pastor", p: 5.00}, {n: "Gringas de Res", p: 5.00}]
-};
-
-// --- VARIABLES GLOBALES Y OBJETOS ---
-let usuarioLogueado = null; 
-let carritoLocal = [];
-const colaCentral = new ColaPedidos();
-let trackingInterval = null; 
 
 // --- PERSISTENCIA DE LA COLA ---
 function guardarColaEnStorage() {
@@ -34,7 +44,7 @@ function cargarColaDeStorage() {
     if (data) colaCentral.cargarDesdeStorage(JSON.parse(data));
 }
 
-// --- GESTIÓN DE VISTAS ---
+//GESTIÓN DE VISTAS
 window.cambiarVista = (idVista) => {
     document.querySelectorAll('.vista').forEach(v => v.style.display = 'none');
     document.getElementById(idVista).style.display = 'block';
@@ -48,7 +58,7 @@ window.cambiarVista = (idVista) => {
 };
 
 function configurarDashboardPorRol() {
-    // POLIMORFISMO EN ACCIÓN: El objeto sabe qué mostrar
+    // usuarioLogueado mostrarra según su clase Cliente/Repartidor
     const config = usuarioLogueado.obtenerConfiguracionVista();
     
     document.getElementById('titulo-rol').textContent = config.titulo;
@@ -58,302 +68,207 @@ function configurarDashboardPorRol() {
     cambiarVista(config.vistaInicial);
 }
 
-// --- RASTREO AUTOMÁTICO ---
+// --- RASTREO Y DATOS DE SUPABASE ---
 async function iniciarRastreoEnVivo() {
     const icono = document.getElementById('tracking-icono');
     const texto = document.getElementById('tracking-texto');
     const desc = document.getElementById('tracking-desc');
 
-    icono.textContent = "🔍";
-    texto.textContent = "Buscando su pedido...";
-
     trackingInterval = setInterval(async () => {
-        const { data, error } = await supabase.from('historialpedidos')
-            .select('*')
-            .eq('cliente', usuarioLogueado.usuario) // Usamos el getter
-            .order('id', { ascending: false })
-            .limit(1);
+        const { data } = await supabase.from('historialpedidos')
+            .select('*').eq('cliente', usuarioLogueado.usuario).order('id', { ascending: false }).limit(1);
 
         if(data && data.length > 0) {
-            let ultimoPedido = data[0];
-            if(ultimoPedido.estado === 'Entregado') {
-                icono.textContent = "✅";
-                texto.textContent = "¡Pedido Entregado!";
-                desc.textContent = `Despachado con éxito por: ${ultimoPedido.repartidor}`;
+            let p = data[0];
+            if(p.estado === 'Entregado') {
+                icono.textContent = "✅"; texto.textContent = "¡Entregado!";
+                desc.textContent = `Despachado por: ${p.repartidor}`;
                 icono.style.color = "#10b981";
             } else {
-                icono.textContent = "🛵";
-                texto.textContent = "En preparación / Fila de espera";
-                desc.textContent = "Su orden está en el sistema de prioridad.";
+                icono.textContent = "🛵"; texto.textContent = "En camino / Fila";
+                desc.textContent = "Tu orden está en el sistema de prioridad.";
                 icono.style.color = "#f59e0b";
             }
         }
     }, 3000);
 }
 
-// --- CARGA DE HISTORIALES DESDE BD ---
 async function cargarHistorialCliente() {
     const contenedor = document.getElementById('lista-historial-cliente');
-    contenedor.innerHTML = "<p>Cargando datos...</p>";
+    contenedor.innerHTML = "<p>Cargando historial...</p>";
+    const { data } = await supabase.from('historialpedidos').select('*').eq('cliente', usuarioLogueado.usuario).order('id', { ascending: false });
     
-    const { data, error } = await supabase.from('historialpedidos')
-        .select('*').eq('cliente', usuarioLogueado.usuario).order('id', { ascending: false });
-
-    if(error || data.length === 0) return contenedor.innerHTML = "<p>No hay registros.</p>";
-
+    if(!data || data.length === 0) return contenedor.innerHTML = "<p>Sin registros.</p>";
     contenedor.innerHTML = data.map(p => `
-        <div style="background:white; padding:15px; border-radius:8px; border-left:4px solid ${p.estado==='Entregado'?'#10b981':'#f59e0b'}; margin-bottom:10px;">
-            <strong>Orden #${p.id} - ${p.restaurante}</strong>
-            <p style="margin:5px 0;">Platos: ${p.descripcion}</p>
-            <small>Estado: ${p.estado} ${p.repartidor ? `(Repartidor: ${p.repartidor})` : ''}</small>
+        <div class="panel" style="margin-bottom:10px; padding:15px; border-left:5px solid ${p.estado==='Entregado'?'#10b981':'#f59e0b'};">
+            <strong>${p.restaurante} - Orden #${p.id}</strong>
+            <p style="margin:5px 0;">${p.descripcion}</p>
+            <small>Estado: ${p.estado}</small>
         </div>
     `).join('');
 }
 
 async function cargarHistorialDelivery() {
     const contenedor = document.getElementById('lista-historial-delivery');
-    contenedor.innerHTML = "<p>Cargando entregas...</p>";
+    const { data } = await supabase.from('historialpedidos').select('*').eq('repartidor', usuarioLogueado.usuario).order('id', { ascending: false });
     
-    const { data, error } = await supabase.from('historialpedidos')
-        .select('*').eq('repartidor', usuarioLogueado.usuario).order('id', { ascending: false });
-
-    if(error || data.length === 0) return contenedor.innerHTML = "<p>No has realizado entregas.</p>";
-
+    if(!data || data.length === 0) return contenedor.innerHTML = "<p>No has entregado nada aún.</p>";
     contenedor.innerHTML = data.map(p => `
-        <div style="background:white; padding:15px; border-radius:8px; border-left:4px solid #3b82f6; margin-bottom:10px;">
-            <strong>Entrega #${p.id} - Cliente: ${p.cliente}</strong>
-            <p style="margin:5px 0;">Ubicación: ${p.destino}</p>
-            <small>Fecha: ${new Date(p.fecha).toLocaleString()}</small>
+        <div class="panel" style="margin-bottom:10px; padding:15px; border-left:5px solid #3b82f6;">
+            <strong>Entrega #${p.id} para ${p.cliente}</strong>
+            <p style="margin:5px 0;">📍 ${p.destino}</p>
         </div>
     `).join('');
 }
 
-// --- PANEL REPARTIDOR (COLA) ---
+// CENTRO DE PERACIONES: COLA
 function renderizarPanelDelivery() {
     cargarColaDeStorage();
-    const divUnico = document.getElementById('lista-pedidos-unica');
-    
-    if (colaCentral.estaVacia()) {
-        divUnico.innerHTML = "<p style='color:#666; text-align:center;'>No hay órdenes en espera.</p>";
-        return;
-    }
+    const lista = document.getElementById('lista-pedidos-unica');
+    if (colaCentral.estaVacia()) return lista.innerHTML = "<p>No hay pedidos pendientes.</p>";
 
-    divUnico.innerHTML = colaCentral.obtenerTodos().map(t => {
+    lista.innerHTML = colaCentral.obtenerTodos().map(t => {
         let esVip = t.prioridad === 1;
-        let colorBorde = esVip ? '#f59e0b' : '#3b82f6';
-        let fondo = esVip ? '#fffaf0' : '#ffffff';
-        let etiqueta = esVip ? '<span style="color:#f59e0b; font-weight:bold;">[EXPRESS VIP]</span>' : '<span style="color:#666;">[ESTÁNDAR]</span>';
-
         return `
-        <div style="padding:15px; background:${fondo}; border-left:5px solid ${colorBorde}; border-radius:5px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-            <h4 style="margin:0;">Ticket #${t.db_id} ${etiqueta}</h4>
-            <p style="margin:5px 0;">📍 Destino: <strong>${t.destino}</strong></p>
-            <small>Cliente: ${t.cliente} | Restaurante: ${t.restaurante}</small>
+        <div class="tarjeta-comida" style="border-left: 6px solid ${esVip?'#f59e0b':'#3b82f6'};">
+            <div class="info-comida">
+                <h4>Ticket #${t.db_id} ${esVip?'⭐ VIP':''}</h4>
+                <p>📍 ${t.destino} | 👤 ${t.cliente}</p>
+            </div>
         </div>`;
     }).join("");
 }
 
-const btnAtender = document.getElementById('btn-atender-siguiente');
-if(btnAtender) {
-    btnAtender.addEventListener('click', async () => {
-        if (colaCentral.estaVacia()) return alert("No hay pedidos.");
+document.getElementById('btn-atender-siguiente')?.addEventListener('click', async () => {
+    if (colaCentral.estaVacia()) return alert("Cola vacía.");
+    let ticket = colaCentral.desencolar();
+    guardarColaEnStorage();
+    await supabase.from('historialpedidos').update({ estado: 'Entregado', repartidor: usuarioLogueado.usuario }).eq('id', ticket.db_id);
+    renderizarPanelDelivery();
+    alert("¡Orden entregada con éxito!");
+});
 
-        let ticketSale = colaCentral.desencolar();
-        guardarColaEnStorage();
-        
-        await supabase.from('historialpedidos')
-            .update({ estado: 'Entregado', repartidor: usuarioLogueado.usuario })
-            .eq('id', ticketSale.db_id);
-
-        renderizarPanelDelivery();
-        alert(`✅ Orden atendida exitosamente.`);
-    });
-}
-
-// --- LÓGICA DE COMPRA ---
+// COMPRA Y CARRITO
 window.agregarAlCarrito = (nombre) => {
     carritoLocal.push(nombre);
     document.getElementById('contenedor-carrito').innerHTML = carritoLocal.map(p => `<div>• ${p}</div>`).join("");
 };
 
-document.getElementById('btn-abrir-pago').addEventListener('click', () => {
+document.getElementById('btn-abrir-pago')?.addEventListener('click', () => {
     if(carritoLocal.length === 0) return alert("Carrito vacío.");
     document.getElementById('modal-pago').style.display = 'flex';
     document.getElementById('modal-direccion-confirm').textContent = usuarioLogueado.direccion;
 });
-document.getElementById('btn-cerrar-modal').addEventListener('click', () => document.getElementById('modal-pago').style.display = 'none');
 
-async function procesarPago(metodo) {
+document.getElementById('btn-cerrar-modal')?.addEventListener('click', () => document.getElementById('modal-pago').style.display = 'none');
+
+async function procesarPago() {
     const isVip = document.getElementById('check-vip').checked;
-    const restId = document.getElementById('select-restaurante').value;
+    const rest = document.getElementById('select-restaurante').value;
     
     const { data, error } = await supabase.from('historialpedidos').insert([{
-        cliente: usuarioLogueado.usuario,
-        restaurante: restId,
-        destino: usuarioLogueado.direccion,
-        descripcion: carritoLocal.join(", "),
-        prioridad: isVip ? 1 : 2,
-        estado: 'Pendiente'
-    }]).select(); 
-    
-    if(error) return alert("Error al registrar en base de datos.");
+        cliente: usuarioLogueado.usuario, restaurante: rest, destino: usuarioLogueado.direccion,
+        descripcion: carritoLocal.join(", "), prioridad: isVip ? 1 : 2, estado: 'Pendiente'
+    }]).select();
 
-    cargarColaDeStorage(); 
+    if(error) return alert("Error en el pago.");
 
-    const nuevoTicket = {
-        db_id: data[0].id,
-        cliente: usuarioLogueado.usuario,
-        prioridad: isVip ? 1 : 2, 
-        restaurante: restId,
-        destino: usuarioLogueado.direccion
-    };
-
-    colaCentral.encolar(nuevoTicket);
+    cargarColaDeStorage();
+    colaCentral.encolar({ db_id: data[0].id, cliente: usuarioLogueado.usuario, prioridad: isVip ? 1 : 2, restaurante: rest, destino: usuarioLogueado.direccion });
     guardarColaEnStorage();
 
     carritoLocal = [];
-    document.getElementById('contenedor-carrito').innerHTML = "<p>Carrito vacío.</p>";
     document.getElementById('modal-pago').style.display = 'none';
-    
-    alert("Pedido procesado.");
+    alert("¡Pedido Pagado!");
     cambiarVista('vista-rastreo-cliente');
 }
 
-document.getElementById('btn-pago-efectivo').addEventListener('click', () => procesarPago('Efectivo'));
-document.getElementById('btn-pago-tarjeta').addEventListener('click', () => procesarPago('Tarjeta'));
+document.getElementById('btn-pago-efectivo')?.addEventListener('click', procesarPago);
+document.getElementById('btn-pago-tarjeta')?.addEventListener('click', procesarPago);
 
-// --- SISTEMA DE LOGIN Y REGISTRO ---
-document.getElementById('btn-registro-submit').addEventListener('click', async () => {
-    const usuario = document.getElementById('reg-usuario').value;
-    const pass = document.getElementById('reg-pass').value;
-    const rol = document.getElementById('reg-rol').value;
-    const selCasa = document.getElementById('sel-casa').value;
-    const selMuni = document.getElementById('sel-muni').value;
-    
-    if(!usuario || !pass) return alert("Faltan datos.");
-    const direccionFinal = rol === 'cliente' ? `${selCasa}, ${selMuni}` : 'Central Operativa';
+// --- LOGIN Y REGISTRO ---
+document.getElementById('btn-registro-submit')?.addEventListener('click', async () => {
+    const u = document.getElementById('reg-usuario').value;
+    const p = document.getElementById('reg-pass').value;
+    const r = document.getElementById('reg-rol').value;
+    const d = r === 'cliente' ? `${document.getElementById('sel-casa').value}, ${document.getElementById('sel-muni').value}` : 'Central Operativa';
 
-    const { error } = await supabase.from('usuarios').insert([{
-        usuario, password: pass, rol, direccion: direccionFinal
-    }]);
-    
-    if(error) alert("Error: " + error.message);
-    else { alert("Registro exitoso."); document.getElementById('container').classList.remove("right-panel-active"); }
+    const { error } = await supabase.from('usuarios').insert([{ usuario: u, password: p, rol: r, direccion: d }]);
+    if(error) alert("Error al registrar.");
+    else { alert("¡Ya podés entrar, bro!"); location.reload(); }
 });
 
-document.getElementById('btn-login-submit').addEventListener('click', async () => {
-    const usuario = document.getElementById('login-usuario').value;
-    const pass = document.getElementById('login-pass').value;
-    
-    const { data, error } = await supabase.from('usuarios')
-        .select('*').eq('usuario', usuario).eq('password', pass);
+document.getElementById('btn-login-submit')?.addEventListener('click', async () => {
+    const u = document.getElementById('login-usuario').value;
+    const p = document.getElementById('login-pass').value;
+    const { data } = await supabase.from('usuarios').select('*').eq('usuario', u).eq('password', p);
     
     if(data && data.length > 0) {
-        let datosBd = data[0];
-        
-        // INSTANCIACIÓN DE OBJETOS SEGÚN SU CLASE
-        if (datosBd.rol === 'cliente') {
-            usuarioLogueado = new Cliente(datosBd.usuario, datosBd.direccion);
-        } else {
-            usuarioLogueado = new Repartidor(datosBd.usuario);
-        }
+        let d = data[0];
 
-        // Guardamos solo los datos 
-        localStorage.setItem('sesionActiva', JSON.stringify({
-            usuario: usuarioLogueado.usuario,
-            rol: usuarioLogueado.rol,
-            direccion: usuarioLogueado.direccion
-        }));
-        location.reload(); 
-    } else {
-        alert("Usuario o contraseña incorrectos.");
-    }
+        usuarioLogueado = d.rol === 'cliente' ? new Cliente(d.usuario, d.direccion) : new Repartidor(d.usuario);
+        localStorage.setItem('sesionActiva', JSON.stringify({ usuario: d.usuario, rol: d.rol, direccion: d.direccion }));
+        location.reload();
+    } else alert("Credenciales incorrectas.");
+});
+
+// OCULTAR DIRECCIÓN PARA DELIVERY EN LODIN
+document.getElementById('reg-rol')?.addEventListener('change', (e) => {
+    document.getElementById('contenedor-direccion-registro').style.display = e.target.value === 'delivery' ? 'none' : 'block';
 });
 
 // --- INICIALIZACIÓN ---
-function inicializarMenu() {
-    const selectRest = document.getElementById('select-restaurante');
-    selectRest.innerHTML = '';
-    for (let nombre in menusPorRestaurante) {
-        let opt = document.createElement('option');
-        opt.value = nombre; opt.textContent = nombre;
-        selectRest.appendChild(opt);
-    }
-    selectRest.addEventListener('change', (e) => cargarMenuFijo(e.target.value));
-    cargarMenuFijo(selectRest.value);
-}
-
 function cargarMenuFijo(id) {
     const items = menusPorRestaurante[id] || [];
     document.getElementById('contenedor-menu').innerHTML = items.map(p => `
-        <div style="background:#fff; padding:10px; margin:5px 0; border:1px solid #ddd; border-radius:5px; display:flex; justify-content:space-between;">
-            <span>${p.n} <b>$${p.p.toFixed(2)}</b></span>
-            <button onclick="agregarAlCarrito('${p.n}')" style="padding:2px 10px;">+</button>
+        <div class="tarjeta-comida">
+            <img src="${p.img}">
+            <div class="info-comida">
+                <h4>${p.n}</h4>
+                <span class="precio">$${p.p.toFixed(2)}</span>
+            </div>
+            <button onclick="agregarAlCarrito('${p.n}')" class="btn-agregar">+</button>
         </div>
     `).join('');
 }
-// --- LÓGICA PARA OCULTAR DIRECCIÓN SI ES DELIVERY ---
-const selectorRol = document.getElementById('reg-rol');
-const contenedorDireccion = document.getElementById('contenedor-direccion-registro');
 
-if(selectorRol && contenedorDireccion) {
-    selectorRol.addEventListener('change', (evento) => {
-        if(evento.target.value === 'delivery') {
-            // Oculta los selectores de municipio/departamento
-            contenedorDireccion.style.display = 'none'; 
-        } else {
-            // Los vuelve a mostrar si regresa a "Cliente"
-            contenedorDireccion.style.display = 'block'; 
-        }
-    });
-}
 window.onload = () => {
-    const sesionGuardada = localStorage.getItem('sesionActiva');
-    if (sesionGuardada) {
-        let datosAnteriores = JSON.parse(sesionGuardada);
-        // Reconstruimos el objeto con su clase
-        if (datosAnteriores.rol === 'cliente') {
-            usuarioLogueado = new Cliente(datosAnteriores.usuario, datosAnteriores.direccion);
-        } else {
-            usuarioLogueado = new Repartidor(datosAnteriores.usuario);
-        }
-
+    const sesion = localStorage.getItem('sesionActiva');
+    if (sesion) {
+        let d = JSON.parse(sesion);
+        usuarioLogueado = d.rol === 'cliente' ? new Cliente(d.usuario, d.direccion) : new Repartidor(d.usuario);
         document.getElementById('pantalla-login').style.display = 'none';
         document.getElementById('pantalla-dashboard').style.display = 'flex';
-        document.getElementById('user-display').textContent = "Usuario: " + usuarioLogueado.usuario;
+        document.getElementById('user-display').textContent = usuarioLogueado.usuario;
         document.getElementById('address-display').textContent = usuarioLogueado.direccion;
         
-        inicializarMenu();
+        // Cargar Restaurantes
+        const selectRest = document.getElementById('select-restaurante');
+        for (let n in menusPorRestaurante) {
+            let o = document.createElement('option'); o.value = n; o.textContent = n; selectRest.appendChild(o);
+        }
+        selectRest.addEventListener('change', (e) => cargarMenuFijo(e.target.value));
+        cargarMenuFijo(selectRest.value);
         configurarDashboardPorRol();
     }
     
-    // Cargar selectores de dirección
-    const selDepto = document.getElementById('sel-depto');
-    for(let d in datosDirecciones) { let o = document.createElement('option'); o.value=d; o.textContent=d; selDepto.appendChild(o); }
-    selDepto.addEventListener('change', () => {
-        const selMuni = document.getElementById('sel-muni');
-        selMuni.innerHTML = '<option>Municipio</option>'; selMuni.disabled = false;
-        for(let m in datosDirecciones[selDepto.value]) { let o = document.createElement('option'); o.value=m; o.textContent=m; selMuni.appendChild(o); }
+    // Cargar Selectores de Ubicación
+    const selD = document.getElementById('sel-depto');
+    for(let d in datosDirecciones) { let o = document.createElement('option'); o.value=d; o.textContent=d; selD.appendChild(o); }
+    selD.addEventListener('change', () => {
+        const selM = document.getElementById('sel-muni');
+        selM.innerHTML = '<option>Municipio</option>'; selM.disabled = false;
+        for(let m in datosDirecciones[selD.value]) { let o = document.createElement('option'); o.value=m; o.textContent=m; selM.appendChild(o); }
     });
     document.getElementById('sel-muni').addEventListener('change', () => {
-        const selCasa = document.getElementById('sel-casa');
-        selCasa.innerHTML = ''; selCasa.disabled = false;
-        for(let i=1; i<=5; i++) { let o = document.createElement('option'); o.value=`Casa ${i}`; o.textContent=`Casa ${i}`; selCasa.appendChild(o); }
+        const selC = document.getElementById('sel-casa'); selC.disabled = false;
+        selC.innerHTML = Array.from({length:5}, (_,i)=>`<option value="Casa ${i+1}">Casa ${i+1}</option>`).join('');
     });
 };
 
-document.getElementById('btn-logout').addEventListener('click', () => { 
-    localStorage.removeItem('sesionActiva'); 
-    location.reload(); 
-});
+document.getElementById('btn-logout')?.addEventListener('click', () => { localStorage.removeItem('sesionActiva'); location.reload(); });
 
-//animacion
-const signUpBtn = document.getElementById('signUp');
-const signInBtn = document.getElementById('signIn');
+// Animación Sliding
 const container = document.getElementById('container');
-
-if(signUpBtn && signInBtn && container) 
- {
-    signUpBtn.addEventListener('click', () => container.classList.add("right-panel-active"));
-    signInBtn.addEventListener('click', () => container.classList.remove("right-panel-active"));
-}
+document.getElementById('signUp')?.addEventListener('click', () => container.classList.add("right-panel-active"));
+document.getElementById('signIn')?.addEventListener('click', () => container.classList.remove("right-panel-active"));
