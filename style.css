@@ -1,14 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap');
 
 :root {
-    /* Fondo más vibrante y moderno para que el cristal resalte */
     --bg-gradient: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 50%, #c2e9fb 100%);
     --primary: rgba(59, 130, 246, 0.85); /* Azul con transparencia */
     --success: rgba(16, 185, 129, 0.85);
     --warning: rgba(245, 158, 11, 0.85);
     --text-main: #2d3748;
     
-    /* Variables para el efecto Cristal (Liquid Glass) */
+    /* Variables para el efecto Cristal */
     --glass-bg: rgba(255, 255, 255, 0.4);
     --glass-border: rgba(255, 255, 255, 0.6);
     --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
@@ -23,16 +22,16 @@ body {
     min-height: 100vh; 
 }
 
-/* --- LOGIN SLIDING --- */
+
 .body-login { 
     display: flex; justify-content: center; align-items: center; 
     height: 100vh; 
-    background: transparent; /* Quitado el color sólido para ver el fondo */
+    background: transparent; 
 }
 
 .container { 
-    background: var(--glass-bg); /* Efecto cristal */
-    backdrop-filter: blur(16px); /* El desenfoque clave del Liquid Glass */
+    background: var(--glass-bg); 
+    backdrop-filter: blur(16px); 
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--glass-border);
     box-shadow: var(--glass-shadow);
@@ -41,18 +40,18 @@ body {
     overflow: hidden; 
     width: 850px; 
     max-width: 100%; 
-    min-height: 600px; /* Aumentado para que no se aplaste el formulario */
+    min-height: 600px; 
 }
 
 .form-container { position: absolute; top: 0; height: 100%; transition: all 0.6s ease-in-out; }
 
 .form-content { 
-    background-color: transparent; /* Debe ser transparente para ver el cristal */
+    background-color: transparent; 
     display: flex; flex-direction: column; padding: 0 50px; 
     height: 100%; justify-content: center; text-align: center; 
 }
 
-/* --- CORRECCIÓN DEL CRISTAL AMONTONADO --- */
+
 .sign-in-container { 
     left: 0; width: 50%; z-index: 2; 
     opacity: 1; 
@@ -62,13 +61,13 @@ body {
 .sign-up-container { 
     left: 0; width: 50%; z-index: 1; 
     opacity: 0; 
-    pointer-events: none; /* Evita clics fantasma */
+    pointer-events: none; 
     transition: all 0.6s ease-in-out; 
 }
 
 .container.right-panel-active .sign-in-container { 
     transform: translateX(100%); 
-    opacity: 0; /* Lo hacemos invisible al moverse */
+    opacity: 0; 
     pointer-events: none;
 }
 
@@ -76,7 +75,7 @@ body {
     transform: translateX(100%); 
     opacity: 1; 
     z-index: 5; 
-    pointer-events: auto; /* Reactiva los clics */
+    pointer-events: auto; 
     animation: show 0.6s; 
 }
 
@@ -88,7 +87,6 @@ body {
 .overlay-container { position: absolute; top: 0; left: 50%; width: 50%; height: 100%; overflow: hidden; transition: transform 0.6s ease-in-out; z-index: 100; }
 .container.right-panel-active .overlay-container { transform: translateX(-100%); }
 
-/* El panel que se mueve también tiene estilo cristal/gradiente */
 .overlay { 
     background: linear-gradient(135deg, rgba(139, 92, 246, 0.9), rgba(59, 130, 246, 0.9)); 
     backdrop-filter: blur(10px);
@@ -108,7 +106,7 @@ body {
     top: 0; 
     height: 100%; 
     width: 50%; 
-    box-sizing: border-box; /* <- ESTO ARREGLA EL CENTRADO HORIZONTAL */
+    box-sizing: border-box; 
     transform: translateX(0); 
     transition: transform 0.6s ease-in-out; 
 }
@@ -120,7 +118,7 @@ body {
 h1 { font-weight: 800; margin: 0; letter-spacing: -0.5px; }
 p { font-size: 14px; margin: 20px 0; }
 
-/* Botones estilo Cristal */
+/* --- BOTONES E INPUTS --- */
 button { 
     border-radius: 20px; 
     border: 1px solid var(--glass-border); 
@@ -134,19 +132,17 @@ button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130,
 button:active { transform: scale(0.95); }
 button.ghost { background-color: rgba(255, 255, 255, 0.2); box-shadow: none; }
 
-/* Inputs estilo Cristal */
 input, select { 
-    background: rgba(255, 255, 255, 0.5); /* Semitransparente */
+    background: rgba(255, 255, 255, 0.5); 
     border: 1px solid rgba(255, 255, 255, 0.8); 
     padding: 12px; margin: 8px 0; width: 100%; 
     border-radius: 12px; font-family: inherit; 
-    box-sizing: border-box; /* Arregla el centrado de las cajas */
+    box-sizing: border-box; 
     transition: all 0.3s;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
 }
 input:focus, select:focus { outline: none; background: rgba(255, 255, 255, 0.8); border-color: #3b82f6; }
 
-/* Checkbox del VIP para que no se estire */
 input[type="checkbox"] {
     width: auto;
     margin: 0 10px 0 0;
@@ -157,46 +153,125 @@ input[type="checkbox"] {
 
 .address-grid { display: flex; flex-direction: column; gap: 5px; width: 100%; }
 
-/* --- DASHBOARD --- */
-#pantalla-dashboard { display: flex; min-height: 100vh; padding: 20px; gap: 20px; box-sizing: border-box;}
+/* --- DASHBOARD--- */
+#pantalla-dashboard { display: flex; min-height: 100vh; padding: 20px; gap: 25px; box-sizing: border-box;}
 
-/* Panel lateral (Sidebar) con Glassmorphism */
 .sidebar { 
-    width: 250px; 
-    background: var(--glass-bg); 
-    backdrop-filter: blur(16px); 
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow);
-    border-radius: 24px; padding: 30px 20px; 
-    display: flex; flex-direction: column; gap: 10px; 
+    width: 270px; 
+    background: rgba(255, 255, 255, 0.15); 
+    backdrop-filter: blur(30px); 
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 15px 35px rgba(31, 38, 135, 0.15);
+    border-radius: 30px; 
+    padding: 35px 25px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 15px; 
 }
 
-.btn-nav { background: transparent; border: none; box-shadow: none; padding: 12px; text-align: left; font-weight: bold; cursor: pointer; color: var(--text-main); border-radius: 12px;}
-.btn-nav:hover { background: rgba(255,255,255,0.6); transform: none; box-shadow: none; }
+#menu-cliente, #menu-delivery {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; 
+}
+
+.btn-nav { 
+    background: rgba(255, 255, 255, 0.2); 
+    border: 1px solid rgba(255, 255, 255, 0.5); 
+    padding: 16px 20px; 
+    text-align: left; 
+    font-weight: 800; 
+    cursor: pointer; 
+    color: var(--text-main); 
+    border-radius: 16px; 
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    width: 100%;
+}
+.btn-nav:hover { 
+    background: rgba(255,255,255,0.8); 
+    transform: translateX(8px); 
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2); 
+    border-color: #ffffff;
+}
 
 .contenido { flex: 1; }
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
 
-/* Paneles del Dashboard con Glassmorphism */
 .panel { 
-    background: var(--glass-bg); 
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.35); 
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
-    padding: 30px; border-radius: 24px; 
+    padding: 35px; border-radius: 30px; 
     box-shadow: var(--glass-shadow); 
 }
 
-/* Modificación para las "tarjetitas" de menú y pedidos dentro de los paneles */
-.panel div[style*="background:#fff"], .panel div[style*="background:white"] {
+/* TARJETAS DE COMIDA CON IMÁGENES */
+.tarjeta-comida {
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 20px;
+    padding: 12px;
+    margin-bottom: 15px; 
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+.tarjeta-comida:hover {
+    transform: translateY(-4px); 
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+.tarjeta-comida img {
+    width: 85px;
+    height: 85px;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+.info-comida { flex: 1; text-align: left; }
+.info-comida h4 {
+    margin: 0 0 5px 0;
+    font-size: 1.1rem;
+    color: var(--text-main);
+    font-weight: 800;
+}
+.precio {
+    font-weight: 800;
+    color: var(--primary);
+    font-size: 1.2rem;
+    background: rgba(59, 130, 246, 0.1);
+    padding: 4px 10px;
+    border-radius: 8px;
+}
+.btn-agregar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%; 
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    margin: 0;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+}
+
+/* Fix para los historiales de la base de datos */
+.panel div[style*="background:white"] {
     background: rgba(255, 255, 255, 0.6) !important;
     backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.8) !important;
     border-radius: 12px !important;
 }
 
-/* --- MODAL --- */
 .modal-oculto { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 1000; }
 .modal-contenido { 
     background: rgba(255, 255, 255, 0.85); 
@@ -205,8 +280,7 @@ input[type="checkbox"] {
     padding: 30px; border-radius: 24px; width: 400px; text-align: center; 
     box-shadow: 0 20px 40px rgba(0,0,0,0.2);
 }
-
 .btn-accion { width: 100%; }
-.btn-naranja { background: var(--warning); }
+.btn-naranja { background: var(--warning); border-color: var(--warning); }
 .btn-outline { background: transparent; border: 1px solid #ef4444; color: #ef4444; margin-top: 10px; box-shadow: none; }
 .btn-outline:hover { background: rgba(239, 68, 68, 0.1); }
