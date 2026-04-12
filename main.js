@@ -195,7 +195,7 @@ document.getElementById('btn-registro-submit')?.addEventListener('click', async 
 
     const { error } = await supabase.from('usuarios').insert([{ usuario: u, password: p, rol: r, direccion: d }]);
     if(error) alert("Error al registrar.");
-    else { alert("¡Ya podés entrar, bro!"); location.reload(); }
+    else { alert("¡Registrado con esxito!"); location.reload(); }
 });
 
 document.getElementById('btn-login-submit')?.addEventListener('click', async () => {
