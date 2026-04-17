@@ -2,7 +2,7 @@
 import { ColaPedidos } from './Estructuras/ColaPedidos.js';
 import { Cliente, Repartidor } from './Estructuras/Usuarios.js';
 
-//  CONFIGURACIÓN DE SUPABASE 
+//  CONFIGURACIÓN DE SUPABASE fejkgjvjj
 const SUPABASE_URL = 'https://nybdoaclmzdfqeaefgxx.supabase.co'; 
 const SUPABASE_KEY = 'sb_publishable_JIUJgw-34pVpDNE8yxdNlQ_xz3vSxzu';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
