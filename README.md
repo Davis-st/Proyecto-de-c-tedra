@@ -11,7 +11,7 @@ De preferencia, se necesita tener instalado **Visual Studio Code (VS Code)** par
 4. Una vez instalada, abrit el archivo `index.html` en el editor.
 5. Haz clic derecho en cualquier parte del código y selecciona la opción **"Open with Live Server"**.
 6. El proyecto se abrirá automáticamente en su navegador web
-7. Otra forma mas sencilla es visitando el siguiente enlace: tinyurl.com/proyectoped
+7. Otra forma mas sencilla es visitando el siguiente enlace: http://tinyurl.com/proyectoped
 ## Tecnologías Utilizadas
 
 * **HTML5:** Estructura de la interfaz.
