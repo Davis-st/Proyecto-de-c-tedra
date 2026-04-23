@@ -199,17 +199,27 @@ document.getElementById('btn-registro-submit')?.addEventListener('click', async 
 });
 
 document.getElementById('btn-login-submit')?.addEventListener('click', async () => {
-    const u = document.getElementById('login-usuario').value;
-    const p = document.getElementById('login-pass').value;
+    // 1. Obtenemos los valores y quitamos espacios en blanco con .trim()
+    const u = document.getElementById('login-usuario').value.trim();
+    const p = document.getElementById('login-pass').value.trim();
+    
+    // 2. LA MEJORA: Si están vacíos, lanzamos alerta y cortamos la ejecución con 'return'
+    if (u === "" || p === "") {
+        alert("⚠️ Por favor, ingresa tu usuario y contraseña.");
+        return; 
+    }
+
+    // 3. Si pasó la validación, recién ahí consultamos a la base de datos
     const { data } = await supabase.from('usuarios').select('*').eq('usuario', u).eq('password', p);
     
     if(data && data.length > 0) {
         let d = data[0];
-
         usuarioLogueado = d.rol === 'cliente' ? new Cliente(d.usuario, d.direccion) : new Repartidor(d.usuario);
         localStorage.setItem('sesionActiva', JSON.stringify({ usuario: d.usuario, rol: d.rol, direccion: d.direccion }));
         location.reload();
-    } else alert("Credenciales incorrectas.");
+    } else {
+        alert("Credenciales incorrectas.");
+    }
 });
 
 // OCULTAR DIRECCIÓN PARA DELIVERY EN LODIN
