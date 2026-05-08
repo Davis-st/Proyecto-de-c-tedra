@@ -199,17 +199,17 @@ document.getElementById('btn-registro-submit')?.addEventListener('click', async 
 });
 
 document.getElementById('btn-login-submit')?.addEventListener('click', async () => {
-    // 1. Obtenemos los valores y quitamos espacios en blanco con .trim()
+    //para optener espacios en blancogit
     const u = document.getElementById('login-usuario').value.trim();
     const p = document.getElementById('login-pass').value.trim();
     
-    // 2. LA MEJORA: Si están vacíos, lanzamos alerta y cortamos la ejecución con 'return'
+    // si estan vacios retornamos
     if (u === "" || p === "") {
         alert("⚠️ Por favor, ingresa tu usuario y contraseña.");
         return; 
     }
 
-    // 3. Si pasó la validación, recién ahí consultamos a la base de datos
+    
     const { data } = await supabase.from('usuarios').select('*').eq('usuario', u).eq('password', p);
     
     if(data && data.length > 0) {
