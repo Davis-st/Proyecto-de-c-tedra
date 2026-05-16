@@ -20,11 +20,11 @@ let trackingInterval = null;
 const menusPorRestaurante = {
     'Pizzeria La Toscana': [
         // --- ENTRADAS ---
-        {n: "Pan con Ajo Supremo", p: 3.50, cat: "Entradas", img: "https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?w=500&q=80"},
-        {n: "Palitroques con Queso", p: 4.25, cat: "Entradas", img: "https://images.unsplash.com/photo-1544982503-9f984c14501a?w=500&q=80"},
-        {n: "Bruschetta de Tomate", p: 4.50, cat: "Entradas", img: "https://images.unsplash.com/photo-1572656631137-7935297eff55?w=500&q=80"},
+        {n: "Pan con Ajo Supremo", p: 3.50, cat: "Entradas", img: "https://i.ytimg.com/vi/cNmckVGQ9pg/maxresdefault.jpg"},
+        {n: "Palitroques con Queso", p: 4.25, cat: "Entradas", img: "https://www.kitchencenter.cl/cdn/shop/articles/1117x745_49af2c6b-1ef2-464e-bb73-9df84085e579.jpg?v=1644587557"},
+        {n: "Bruschetta de Tomate", p: 4.50, cat: "Entradas", img: "https://www.midiariodecocina.com/wp-content/uploads/2014/11/Bruschetta-de-tomate-y-albahaca01.jpg"},
         {n: "Papas Gajo Italianas", p: 3.99, cat: "Entradas", img: "https://images.unsplash.com/photo-1576107232684-1279f390859f?w=500&q=80"},
-        {n: "Ensalada Caprese", p: 5.00, cat: "Entradas", img: "https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?w=500&q=80"},
+        {n: "Ensalada Caprese", p: 5.00, cat: "Entradas", img: "https://deliciaskitchen.b-cdn.net/wp-content/uploads/2022/07/ensalada-caprese-receta-original-italiana.jpg"},
 
         // --- PLATOS FUERTES ---
         {n: "Pizza Cuatro Quesos", p: 12.00, cat: "Platos Fuertes", img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500&q=80"}, 
@@ -38,27 +38,27 @@ const menusPorRestaurante = {
         {n: "Té Frío de Limón", p: 1.75, cat: "Bebidas", img: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=500&q=80"},
         {n: "Soda Italiana de Fresa", p: 2.50, cat: "Bebidas", img: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=500&q=80"},
         {n: "Cerveza Corona Extra", p: 3.00, cat: "Bebidas", img: "https://images.unsplash.com/photo-1608270586620-248524c67de9?w=500&q=80"},
-        {n: "Agua Mineral Con Gas", p: 1.25, cat: "Bebidas", img: "https://images.unsplash.com/photo-1608885898957-a599fb1698d6?w=500&q=80"},
+        {n: "Agua Mineral Con Gas", p: 1.25, cat: "Bebidas", img: "https://www.sportlife.es/uploads/s1/10/96/81/39/beneficios-de-beber-agua-con-gas.jpeg"},
 
         // --- POSTRES ---
         {n: "Tiramisú Clásico", p: 4.50, cat: "Postres", img: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=500&q=80"},
         {n: "Panna Cotta de Frutos Rojos", p: 4.00, cat: "Postres", img: "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=500&q=80"},
-        {n: "Calzone de Nutella", p: 5.50, cat: "Postres", img: "https://images.unsplash.com/photo-1517686469429-8faf88b9f7af?w=500&q=80"},
-        {n: "Gelato de Vainilla", p: 2.75, cat: "Postres", img: "https://images.unsplash.com/photo-1560008511-11c63416e52d?w=500&q=80"},
+        {n: "Calzone de Nutella", p: 5.50, cat: "Postres", img: "https://media-cdn.tripadvisor.com/media/photo-s/1a/48/38/34/nutella-calzone.jpg"},
+        {n: "Gelato de Vainilla", p: 2.75, cat: "Postres", img: "https://static.bainet.es/clip/4896efa6-ec52-4ffe-ab1c-9b789353e444_source-aspect-ratio_1600w_0.jpg"},
         {n: "Cheesecake de Fresa", p: 4.25, cat: "Postres", img: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=500&q=80"}
     ], 
     'Burger House Gourmet': [
         // --- ENTRADAS ---
-        {n: "Aros de Cebolla Crujientes", p: 3.25, cat: "Entradas", img: "https://images.unsplash.com/photo-1639024471283-267a3fc7752f?w=500&q=80"},
+        {n: "Aros de Cebolla Crujientes", p: 3.25, cat: "Entradas", img: "https://chefeel.com/chefgeneralfiles/2024/01/arreglo-sabroso-aros-cebolla-880x844.jpg"},
         {n: "Papas Fritas con Queso Bacon", p: 4.50, cat: "Entradas", img: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=500&q=80"},
-        {n: "Alitas BBQ (6 unidades)", p: 5.99, cat: "Entradas", img: "https://images.unsplash.com/photo-1608039829572-78524f79c4c7?w=500&q=80"},
-        {n: "Deditos de Queso Mozzarella", p: 4.00, cat: "Entradas", img: "https://images.unsplash.com/photo-1531749668029-2db88e4b76ce?w=500&q=80"},
+        {n: "Alitas BBQ (6 unidades)", p: 5.99, cat: "Entradas", img: "https://www.labuena.com.co/wp-content/uploads/2020/10/alitas-BBQ-imagen-destacada.jpg"},
+        {n: "Deditos de Queso Mozzarella", p: 4.00, cat: "Entradas", img: "https://alimentosochoa.com/wp-content/uploads/2025/12/Dedos-de-queso-mozzarella.jpg"},
         {n: "Nachos Cheddar Sencillos", p: 4.25, cat: "Entradas", img: "https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?w=500&q=80"},
 
         // --- PLATOS FUERTES ---
         {n: "Hamburguesa Doble Carne", p: 6.50, cat: "Platos Fuertes", img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=80"}, 
         {n: "Monster Bacon Burger", p: 7.99, cat: "Platos Fuertes", img: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=500&q=80"},
-        {n: "Crispy Chicken Sandwich", p: 5.75, cat: "Platos Fuertes", img: "https://images.unsplash.com/photo-1627662236973-4f8259fa2441?w=500&q=80"},
+        {n: "Crispy Chicken Sandwich", p: 5.75, cat: "Platos Fuertes", img: "https://howtofeedaloon.com/wp-content/uploads/2023/02/fried-chicken-sandwich-IG.jpg"},
         {n: "BBQ Texas Burger XL", p: 8.50, cat: "Platos Fuertes", img: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=500&q=80"},
         {n: "Costillas BBQ Ahumadas", p: 11.99, cat: "Platos Fuertes", img: "https://images.unsplash.com/photo-1544025162-d76694265947?w=500&q=80"},
 
@@ -67,43 +67,43 @@ const menusPorRestaurante = {
         {n: "Malteada de Fresa", p: 3.50, cat: "Bebidas", img: "https://images.unsplash.com/photo-1579954115545-a95591f28bfc?w=500&q=80"},
         {n: "Limonada con Hierbabuena", p: 2.25, cat: "Bebidas", img: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500&q=80"},
         {n: "Cerveza Artesanal IPAs", p: 4.00, cat: "Bebidas", img: "https://images.unsplash.com/photo-1600788886242-5c96aabe3757?w=500&q=80"},
-        {n: "Gaseosa Sprite Elixir", p: 1.50, cat: "Bebidas", img: "https://images.unsplash.com/photo-1625772290748-160b63241416?w=500&q=80"},
+        {n: "Gaseosa Sprite Elixir", p: 1.50, cat: "Bebidas", img: "https://st2.depositphotos.com/1000647/9330/i/950/depositphotos_93303834-stock-photo-soft-drink-sprite.jpg"},
 
         // --- POSTRES ---
         {n: "Brownie con Helado", p: 3.99, cat: "Postres", img: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=500&q=80"},
-        {n: "Apple Pie Caliente", p: 4.25, cat: "Postres", img: "https://images.unsplash.com/photo-1519869325930-281384150729?w=500&q=80"},
-        {n: "Waffle con Caramelo", p: 4.50, cat: "Postres", img: "https://images.unsplash.com/photo-1562376502-6f769499c886?w=500&q=80"},
-        {n: "Churros con Chocolate", p: 3.00, cat: "Postres", img: "https://images.unsplash.com/photo-1624371414361-e6e8ea48fc4e?w=500&q=80"},
-        {n: "Cookie Ice Cream Sandwich", p: 3.75, cat: "Postres", img: "https://images.unsplash.com/photo-1549589237-9e70b6be4da8?w=500&q=80"}
+        {n: "Apple Pie Caliente", p: 4.25, cat: "Postres", img: "https://tn.com.ar/resizer/v2/que-es-y-como-se-hace-el-apple-pie-el-postre-mas-clasico-de-estados-unidos-foto-gemini-TSNFEAROD5BAZIRPUFV7TYZTQM.jpg?auth=ca3f18ea39ad03715dffc5350780cfd0966f8c545ca0042d05ef67a31e29400e&width=1023"},
+        {n: "Waffle con Caramelo", p: 4.50, cat: "Postres", img: "https://thumbs.dreamstime.com/b/gafas-de-especias-calabaza-oto%C3%B1ales-con-topping-batido-caramelo-y-pecans-escena-la-mesa-contra-madera-oscura-caparaz%C3%B3n-visi%C3%B3n-198051449.jpg"},
+        {n: "Churros con Chocolate", p: 3.00, cat: "Postres", img: "https://delishglobe.com/wp-content/uploads/2024/10/Churros-con-Chocolate-Recipe.png"},
+        {n: "Cookie Ice Cream Sandwich", p: 3.75, cat: "Postres", img: "https://www.tasteofhome.com/wp-content/uploads/2024/07/Chocolate-Chip-Cookie-Ice-Cream-Sandwiches_EXPS_TOHVP24_277202_MR_07_11_2.jpg"}
     ],
     'Taquería El Pastor': [
         // --- ENTRADAS ---
-        {n: "Totopos con Guacamole Grande", p: 4.50, cat: "Entradas", img: "https://images.unsplash.com/photo-1570462211464-5bf36022201f?w=500&q=80"},
-        {n: "Queso Fundido con Chorizo", p: 5.25, cat: "Entradas", img: "https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?w=500&q=80"},
-        {n: "Elote Loco Desgranado", p: 3.00, cat: "Entradas", img: "https://images.unsplash.com/photo-1551782450-17144efb9c50?w=500&q=80"},
-        {n: "Chicharrón de Queso", p: 3.75, cat: "Entradas", img: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=500&q=80"},
-        {n: "Sopa de Tortilla Crujiente", p: 4.00, cat: "Entradas", img: "https://images.unsplash.com/photo-1547592165-e1d17fed6005?w=500&q=80"},
+        {n: "Totopos con Guacamole Grande", p: 4.50, cat: "Entradas", img: "https://granvita.com/wp-content/uploads/2020/09/HEader_Guacamole.jpg"},
+        {n: "Queso Fundido con Chorizo", p: 5.25, cat: "Entradas", img: "https://realfoodbydad.com/wp-content/uploads/2019/03/Chorizo-Queso-Fundido-Real-Food-by-Dad-683x1024.jpg"},
+        {n: "Elote Loco Desgranado", p: 3.00, cat: "Entradas", img: "https://www.cardamomo.news/__export/1751404434040/sites/debate/img/2025/07/01/esquite_-4-.png_423682103.png"},
+        {n: "Chicharrón de Queso", p: 3.75, cat: "Entradas", img: "https://enmicasa.com/wp-content/uploads/2020/07/chicharrones-de-queso_ho.jpg"},
+        {n: "Sopa de Tortilla Crujiente", p: 4.00, cat: "Entradas", img: "https://www.unileverfoodsolutions.com.mx/dam/global-ufs/mcos/NOLA/calcmenu/recipes/MX-recipes/general/sopa-de-tortilla/main-header.jpg"},
 
         // --- PLATOS FUERTES ---
         {n: "Orden Tacos al Pastor (3 uds)", p: 5.00, cat: "Platos Fuertes", img: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=500&q=80"}, 
         {n: "Gringas de Res Suprema", p: 5.50, cat: "Platos Fuertes", img: "https://images.unsplash.com/photo-1615870216519-2f9fa575fa5c?w=500&q=80"},
-        {n: "Burrito Gigante Tex-Mex", p: 6.99, cat: "Platos Fuertes", img: "https://images.unsplash.com/photo-1626700051175-6518c4793f4f?w=500&q=80"},
-        {n: "Quesadillas de Birria (3 uds)", p: 7.50, cat: "Platos Fuertes", img: "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=500&q=80"},
-        {n: "Alambre de Pollo Familiar", p: 8.99, cat: "Platos Fuertes", img: "https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=500&q=80"},
+        {n: "Burrito Gigante Tex-Mex", p: 6.99, cat: "Platos Fuertes", img: "https://tb-static.uber.com/prod/image-proc/processed_images/f5311f333e73d98257dc800a20030678/1da9a9e826d15157cea1c5bb8696f248.jpeg"},
+        {n: "Quesadillas de Birria (3 uds)", p: 7.50, cat: "Platos Fuertes", img: "https://popmenucloud.com/cdn-cgi/image/width%3D1200%2Cheight%3D1200%2Cfit%3Dscale-down%2Cformat%3Dauto%2Cquality%3D60/oehdaixl/611875d7-f55c-4180-aea5-a3ccb4934453.jpg"},
+        {n: "Alambre de Pollo Familiar", p: 8.99, cat: "Platos Fuertes", img: "https://cocina-casera.com/mx/wp-content/uploads/2017/11/alambre-pollo.jpg"},
 
         // --- BEBIDAS ---
-        {n: "Agua de Horchata Grande", p: 2.00, cat: "Bebidas", img: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=500&q=80"},
+        {n: "Agua de Horchata Grande", p: 2.00, cat: "Bebidas", img: "https://cdn0.recetasgratis.net/es/posts/5/7/3/agua_de_horchata_74375_1200.jpg"},
         {n: "Agua Fresca de Jamaica", p: 2.00, cat: "Bebidas", img: "https://images.unsplash.com/photo-1497534446932-c925b458314e?w=500&q=80"},
-        {n: "Michelada Mexicana Especial", p: 4.50, cat: "Bebidas", img: "https://images.unsplash.com/photo-1536935338788-846bb9981813?w=500&q=80"},
-        {n: "Gaseosa Jarritos Tam", p: 2.25, cat: "Bebidas", img: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500&q=80"},
-        {n: "Margarita Frozen clásica", p: 5.00, cat: "Bebidas", img: "https://images.unsplash.com/photo-1556855247-ca637fa45fbc?w=500&q=80"},
+        {n: "Michelada Mexicana Especial", p: 4.50, cat: "Bebidas", img: "https://www.muydelish.com/wp-content/uploads/2023/04/michelada-beer.jpg"},
+        {n: "Gaseosa Jarritos Tam", p: 2.25, cat: "Bebidas", img: "https://elceo.com/wp-content/uploads/2024/04/jarritos-1.jpg"},
+        {n: "Margarita Frozen clásica", p: 5.00, cat: "Bebidas", img: "https://assets.epicurious.com/photos/642da49267d53df640581f0c/1:1/w_4436,h_4436,c_limit/FrozenMargarita_RECIPE_033123_50664.jpg"},
 
         // --- POSTRES ---
-        {n: "Flan Napolitano de Cajeta", p: 3.25, cat: "Postres", img: "https://images.unsplash.com/photo-1528975604071-b4dc52a2d18c?w=500&q=80"},
-        {n: "Tres Leches Tradicional", p: 3.99, cat: "Postres", img: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=500&q=80"},
-        {n: "Chocoflan Casero", p: 3.50, cat: "Postres", img: "https://images.unsplash.com/photo-1608756687911-a1b540c6d16b?w=500&q=80"},
-        {n: "Plátanos Fritos con Crema", p: 2.50, cat: "Postres", img: "https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=500&q=80"},
-        {n: "Helado Frito de la Casa", p: 4.50, cat: "Postres", img: "https://images.unsplash.com/photo-1501443769991-63e0481795b5?w=500&q=80"}
+        {n: "Flan Napolitano de Cajeta", p: 3.25, cat: "Postres", img: "https://images.aws.nestle.recipes/original/9a7b5fb66b5ac1fba45399b73fe16374_flan_napolitano_ligero.jpg"},
+        {n: "Tres Leches Tradicional", p: 3.99, cat: "Postres", img: "https://www.modernhoney.com/wp-content/uploads/2024/10/Tres-Leches-Cake-18-500x500.jpg"},
+        {n: "Chocoflan Casero", p: 3.50, cat: "Postres", img: "https://i.ytimg.com/vi/PSZRYnzWga4/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLCHU04hi1I-98p_XFtEYPNQdLdIKA"},
+        {n: "Plátanos Fritos con Crema", p: 2.50, cat: "Postres", img: "https://www.cardamomo.news/__export/1710873469286/sites/debate/img/2024/03/19/platano_frito_con_crema_y_queso.png_557707261.png"},
+        {n: "Helado Frito de la Casa", p: 4.50, cat: "Postres", img: "https://chefeel.com/chefgeneralfiles/2025/02/round-cake-with-ice-cream-inside-880x826.jpg"}
     ]
 };
 
