@@ -92,7 +92,6 @@ const menusPorRestaurante = {
         {n: "Helado Frito", p: 4.50, cat: "Postres", img: "https://chefeel.com/chefgeneralfiles/2025/02/round-cake-with-ice-cream-inside-880x826.jpg"}
     ],
     'Sushi Kento': [
-        {n: "Edamame Salado", p: 3.50, cat: "Entradas", img: "https://images.unsplash.com/photo-1558980664-dfca2316e6d7?w=500&q=80"},
         {n: "Gyozas de Cerdo", p: 5.25, cat: "Entradas", img: "https://images.unsplash.com/photo-1496116218417-1a781b1c416c?w=500&q=80"},
         {n: "Yakitori de Pollo", p: 4.50, cat: "Entradas", img: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=500&q=80"},
         {n: "Sopa Miso", p: 3.00, cat: "Entradas", img: "https://images.unsplash.com/photo-1547592180-85f173990554?w=500&q=80"},
@@ -177,10 +176,6 @@ function construirGrafoBase() {
 }
 construirGrafoBase();
 
-// PERSISTENCIA DE LA COLA 
-function guardarColaEnStorage() { localStorage.setItem('colaCentral', JSON.stringify(colaCentral.obtenerTodos())); }
-function cargarColaDeStorage() { const data = localStorage.getItem('colaCentral'); if (data) colaCentral.cargarDesdeStorage(JSON.parse(data)); } 
-
 // MAPA DINÁMICO
 async function inicializarMapaGlobal() {
     const contenedor = document.getElementById('mapa-nodos');
@@ -226,13 +221,12 @@ async function inicializarMapaGlobal() {
         });
     });
 
-    nodesDataSet.add({ 
+  nodesDataSet.add({ 
         id: 'MOTO_RIDER', label: '🛵 Repartidor', shape: 'image', 
-        image: 'https://cdn-icons-png.flaticon.com/512/2972/2972185.png', 
-        size: 55, hidden: true, physics: false,
-        font: { size: 14, bold: true, color: '#f59e0b' }
+        image: 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f6f5.png', 
+        size: 50, hidden: true, physics: false,
+        font: { size: 14, bold: true, color: '#f59e0b', background: 'rgba(255,255,255,0.9)' }
     });
-
     // dezplasamiento mapa
     networkMapa = new vis.Network(contenedor, { nodes: nodesDataSet, edges: edgesDataSet }, {
         layout: { randomSeed: 999 }, 
@@ -356,9 +350,20 @@ function configurarDashboardPorRol() {
 }
 
 // --- PANEL CONTROL DELIVERY ---
-function renderizarPanelDelivery() {
-    cargarColaDeStorage();
+async function renderizarPanelDelivery() {
     const lista = document.getElementById('lista-pedidos-unica');
+    lista.innerHTML = "<p>Cargando pedidos de la base de datos...</p>";
+
+    const { data } = await supabase.from('historialpedidos').select('*').eq('estado', 'Pendiente');
+    
+    colaCentral.cargarDesdeStorage([]);
+    
+    if (data && data.length > 0) {
+        data.forEach(p => {
+            colaCentral.encolar({ db_id: p.id, cliente: p.cliente, prioridad: p.prioridad, restaurante: p.restaurante, destino: p.destino });
+        });
+    }
+
     if (colaCentral.estaVacia()) return lista.innerHTML = "<p>No hay pedidos pendientes.</p>";
 
     lista.innerHTML = colaCentral.obtenerTodos().map(t => {
@@ -377,7 +382,6 @@ function renderizarPanelDelivery() {
 document.getElementById('btn-atender-siguiente')?.addEventListener('click', async () => {
     if (colaCentral.estaVacia()) return alert("Cola vacía.");
     let ticket = colaCentral.desencolar();
-    guardarColaEnStorage();
     
     await supabase.from('historialpedidos').update({ estado: 'En Camino', repartidor: usuarioLogueado.usuario }).eq('id', ticket.db_id);
     cambiarVista('vista-rastreo-cliente');
@@ -444,10 +448,6 @@ async function procesarPago() {
     }]).select();
 
     if(error) return alert("Error en el pago.");
-
-    cargarColaDeStorage();
-    colaCentral.encolar({ db_id: data[0].id, cliente: usuarioLogueado.usuario, prioridad: isVip ? 1 : 2, restaurante: stringRestaurantes, destino: usuarioLogueado.direccion });
-    guardarColaEnStorage();
 
     carritoLocal = []; renderizarCarritoUI(); document.getElementById('modal-pago').style.display = 'none';
     alert("¡Pedido Pagado con éxito!"); cambiarVista('vista-rastreo-cliente');
@@ -545,4 +545,13 @@ window.onload = () => {
         const selC = document.getElementById('sel-casa'); selC.disabled = false;
         selC.innerHTML = Array.from({length:10}, (_,i)=>`<option value="Casa ${i+1}">Casa ${i+1}</option>`).join('');
     });
+
+    document.getElementById('btn-logout')?.addEventListener('click', () => { 
+        localStorage.removeItem('sesionActiva'); 
+        window.location.reload(); 
+    });
+
+    const container = document.getElementById('container');
+    document.getElementById('signUp')?.addEventListener('click', () => container.classList.add("right-panel-active"));
+    document.getElementById('signIn')?.addEventListener('click', () => container.classList.remove("right-panel-active"));
 };
