@@ -221,3 +221,154 @@ input[type="checkbox"] { width: auto; margin: 0 10px 0 0; transform: scale(1.3);
 .glass-enter { animation: glassIn 0.55s cubic-bezier(0.34, 1.2, 0.64, 1) both; } .glass-enter-delay-1 { animation-delay: 0.08s; } .glass-enter-delay-2 { animation-delay: 0.16s; } .glass-enter-delay-3 { animation-delay: 0.24s; }
 ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); border-radius: 10px; } ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.42); border-radius: 10px; border: 1px solid rgba(255,255,255,0.22); } ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.65); }
 ::selection { background: rgba(107,72,255,0.18); color: var(--text-main); }
+
+
+/* Contenedor principal del menú */
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+    margin-bottom: 12px;
+    user-select: none;
+}
+
+/* El botón principal (la barra cerrada) */
+.dropdown-selected {
+    width: 100%;
+    padding: 14px 24px; /* Un poco más de espacio para darle presencia */
+    font-size: 1.05rem;
+    font-weight: 600; /* Letras más gruesas y firmes como tus botones */
+    color: #2c3e50; /* Tono oscuro nítido y super elegante */
+    
+    /* Refinamos el Glassmorphism */
+    background: rgba(255, 255, 255, 0.5); 
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    
+    /* Bordes ultra redondeados estilo píldora (ovalado completo) */
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 30px; 
+    
+    /* Sombras que dan el mismo volumen 3D flotante */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05), 
+                inset 0 1px 2px rgba(255, 255, 255, 0.4);
+    
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Animación suave premium */
+}
+
+/* Flechita decorativa a la derecha */
+.dropdown-selected::after {
+    content: '▼';
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.8rem;
+    color: #6366f1;
+    transition: transform 0.3s ease;
+}
+
+/* Rotación de la flecha cuando se abre */
+.custom-dropdown.open .dropdown-selected::after {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+
+.dropdown-options {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    width: 100%;
+    /* Mismo efecto Glassmorphic que tus paneles principales */
+    background: rgba(255, 255, 255, 0.6); 
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 16px; /* ¡POR FIN BORDES REDONDEADOS! */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    
+    list-style: none;
+    padding: 8px 0;
+    margin: 0;
+    z-index: 999;
+    
+    /* Efecto de animación para abrirse suave */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+}
+
+/* Clase que se activa al hacer clic para mostrar la lista */
+.custom-dropdown.open .dropdown-options {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Cada opción de la lista */
+.dropdown-options li {
+    padding: 10px 20px;
+    color: #333;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+
+.dropdown-options li:hover {
+    background: rgba(99, 102, 241, 0.15);
+    color: #6366f1;
+}
+
+.dropdown-options li:first-child { border-top-left-radius: 12px; border-top-right-radius: 12px; }
+.dropdown-options li:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
+
+
+.dropdown-selected:hover {
+    background: rgba(255, 255, 255, 0.75); 
+    border-color: rgba(255, 255, 255, 0.9);
+    
+  
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.15), 
+                inset 0 1px 2px rgba(255, 255, 255, 0.6);
+    
+    transform: translateY(-2px); 
+}
+
+
+.custom-dropdown.open .dropdown-selected {
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transform: translateY(0);
+}
+
+
+.dropdown-selected::after {
+    content: '▼';
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.8rem;
+    color: #6366f1;
+    transition: transform 0.3s ease;
+}
+
+
+.custom-dropdown.open .dropdown-selected::after {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+/*estilos de logo dinamico*/
+
+.logo-overlay {
+    width: 90px;     
+    height: auto;
+    margin-bottom: 15px; 
+    object-fit: contain;
+    
+   
+    filter: drop-shadow(0px 6px 12px rgba(0, 0, 0, 0.2));
+}

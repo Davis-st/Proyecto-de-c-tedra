@@ -8,7 +8,7 @@
 </head>
 <body>
 
-    <div id="pantalla-login" class="body-login">
+   <div id="pantalla-login" class="body-login">
         <div class="container" id="container">
             <div class="form-container sign-up-container">
                 <div class="form-content">
@@ -16,12 +16,12 @@
                     <span style="margin-bottom: 15px;">Complete el formulario de registro</span>
                     <input type="text" id="reg-usuario" placeholder="Nombre de Usuario" />
                     <input type="password" id="reg-pass" placeholder="Contraseña Segura" />
-                    
-                    <label style="align-self: flex-start; margin-top: 10px; font-size: 0.8rem; font-weight: bold;">Tipo de Perfil:</label>
+
+                      <label style="align-self: flex-start; margin-top: 10px; font-size: 0.8rem; font-weight: bold;">Tipo de Perfil:</label>
                     <div style="width: 100%; margin-bottom: 10px;">
                         <select id="reg-rol">
                             <option value="cliente">Cliente (Usuario Final)</option>
-                            <option value="delivery">Personal de Logística (Delivery)</option>
+                        <option value="delivery">Personal de Logística (Delivery)</option>
                         </select>
                     </div>
 
@@ -37,6 +37,8 @@
                 </div>
             </div>
 
+
+
             <div class="form-container sign-in-container">
                 <div class="form-content">
                     <h1>Bienvenido</h1>
@@ -45,20 +47,27 @@
                     <input type="password" id="login-pass" placeholder="Contraseña" />
                     <button id="btn-login-submit">Ingresar</button>
                 </div>
-            </div>
 
-            <div class="overlay-container">
+            </div>
+           <div class="overlay-container">
                 <div class="overlay">
+                    
                     <div class="overlay-panel overlay-left">
+                        <img src="logo-blanco.png" alt="Logo" class="logo-overlay">
+                        
                         <h1>Acceso Usuarios</h1>
                         <p>Si ya dispone de una cuenta, inicie session.</p>
                         <button class="ghost" id="signIn">Iniciar Sesión</button>
                     </div>
+                    
                     <div class="overlay-panel overlay-right">
+                        <img src="logo-blanco.png" alt="Logo" class="logo-overlay">
+                        
                         <h1>Logística Express</h1>
                         <p>Si no tiene cuenta registrate aqui</p>
                         <button class="ghost" id="signUp">Nuevo Registro</button>
                     </div>
+                    
                 </div>
             </div>
         </div>
@@ -77,30 +86,59 @@
                 <button onclick="cambiarVista('vista-rastreo-cliente')" class="btn-nav">Estado del Servicio</button>
                 <button onclick="cambiarVista('vista-historial-cliente')" class="btn-nav">Mi Historial</button>
             </div>
-
-            <div id="menu-delivery" style="display: none;">
-                <button onclick="cambiarVista('vista-panel-delivery')" class="btn-nav">Centro de Operaciones</button>
-                <button onclick="cambiarVista('vista-historial-delivery')" class="btn-nav">Mis Entregas</button>
+          <div id="menu-delivery" style="display: none;">
+          <button onclick="cambiarVista('vista-panel-delivery')" class="btn-nav">Centro de Operaciones</button>
+        <button onclick="cambiarVista('vista-historial-delivery')" class="btn-nav">Mis Entregas</button>
             </div>
 
-            <button id="btn-logout" class="btn-nav" style="margin-top:auto; color:#e9220c;">Cerrar Sesión</button>
+          <div class="sidebar-logo-container" style="text-align: center; margin-top: 40px; margin-bottom: 20px; opacity: 0.85;">
+          <img src="logo-blanco-con-letras.png" alt="Logística Express" style="max-width: 80%; height: auto; object-fit: contain;">
+           </div>
+
+       <button id="btn-logout" class="btn-nav" style="margin-top:auto; color:#e9220c;">Cerrar Sesión</button>
         </nav>
 
-        <main class="contenido">
-            <section id="vista-pedidos" class="vista activa">
-                <div class="grid-2">
-                    <div class="panel">
-                        <h2 style="color: var(--primary);">Menú</h2>
-                        <select id="select-restaurante"></select>
-                        <div id="contenedor-menu" style="margin-top: 20px;"></div>
-                    </div>
-                    <div class="panel">
-                        <h2>Orden en Curso</h2>
-                        <div id="contenedor-carrito"><p>No hay elementos seleccionados.</p></div>
-                        <button id="btn-abrir-pago" class="btn-accion btn-naranja" style="margin-top: 15px;">Procesar Orden</button>
-                    </div>
-                </div>
-            </section>
+   <main class="contenido">
+    <section id="vista-pedidos" class="vista activa">
+        <div class="grid-2">
+            <div class="panel">
+                <h2 style="color: var(--primary);">Menú</h2>
+<div class="custom-dropdown" id="dropdown-restaurante">
+    <div class="dropdown-selected" id="selected-restaurante-value">
+        🏪 Seleccione un restaurante
+    </div>
+    <ul class="dropdown-options" id="options-restaurante">
+        </ul>
+</div>
+<div class="custom-dropdown" id="dropdown-categoria">
+    <div class="dropdown-selected" id="selected-categoria-value">
+        ✨ Click aquí para abrir el menú
+    </div>
+    <ul class="dropdown-options" id="options-categoria">
+        <li data-value="Entradas">Entradas</li>
+        <li data-value="Platos Fuertes">Platos Fuertes</li>
+        <li data-value="Bebidas">Bebidas</li>
+        <li data-value="Postres">Postres</li>
+    </ul>
+</div>
+                <div id="contenedor-menu" style="margin-top: 20px;"></div>
+            </div>
+
+<div class="panel">
+    <h2>Orden en Curso</h2>
+    <div id="contenedor-carrito"><p>No hay elementos seleccionados.</p></div>
+    
+    <div style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #ccc; font-size: 0.95rem;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+            <span>Subtotal:</span>
+            <strong id="precio-subtotal-orden">$0.00</strong>
+        </div>
+    </div>
+
+    <button id="btn-abrir-pago" class="btn-accion btn-naranja" style="margin-top: 15px;">Procesar Orden</button>
+</div>
+        </div>
+     </section>
 
             <section id="vista-rastreo-cliente" class="vista" style="display: none;">
                 <div class="panel">
@@ -143,23 +181,37 @@
         </main>
     </div>
 
-    <div id="modal-pago" class="modal-oculto">
-        <div class="modal-contenido">
-            <h2>Pagos</h2>
-            <p>Confirmar envío a: <strong id="modal-direccion-confirm">...</strong></p>
-            <div style="display: flex; gap: 10px; justify-content: center; margin: 20px 0;">
-                <button class="btn-accion" id="btn-pago-efectivo" style="background: #10b981;">Efectivo</button>
-                <button class="btn-accion" id="btn-pago-tarjeta" style="background: #3b82f6; color: white;">Tarjeta</button>
+ <div id="modal-pago" class="modal-oculto">
+    <div class="modal-contenido">
+        <h2>Pagos</h2>
+        <p>Confirmar envío a: <strong id="modal-direccion-confirm">...</strong></p>
+        
+        <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin: 15px 0; text-align: left; font-size: 0.95rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px; color: #555;">
+                <span>Productos:</span>
+                <span id="precio-subtotal-modal" style="font-weight: 500;">$0.00</span> 
             </div>
-            <div style="margin-bottom: 20px; text-align: left; background: #fffaf0; border: 1px solid #f59e0b; padding: 10px; border-radius: 8px;">
-                <label style="cursor: pointer; display: flex; align-items: center; gap: 10px;">
-                    <input type="checkbox" id="check-vip"> 
-                    <span>Servicio Express VIP <b style="color: #dc2626; font-size: 1.1em;">(+$2.50)</b></span>
-                </label>
+            <div style="display: flex; justify-content: space-between; padding-top: 5px; border-top: 1px solid #dee2e6; font-size: 1.1rem; color: var(--primary);">
+                <strong>Total Neto:</strong>
+                <strong id="precio-total-orden">$0.00</strong>
             </div>
-            <button id="btn-cerrar-modal" class="btn-outline">Cancelar Operación</button>
         </div>
+
+        <div style="margin-bottom: 20px; text-align: left; background: #fffaf0; border: 1px solid #f59e0b; padding: 10px; border-radius: 8px;">
+            <label style="cursor: pointer; display: flex; align-items: center; gap: 10px;">
+                <input type="checkbox" id="check-vip"> 
+                <span>Servicio Express VIP <b style="color: #dc2626; font-size: 1.1em;">(+$2.50)</b></span>
+            </label>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: center; margin: 20px 0;">
+            <button class="btn-accion" id="btn-pago-efectivo" style="background: #10b981;">Efectivo</button>
+            <button class="btn-accion" id="btn-pago-tarjeta" style="background: #3b82f6; color: white;">Tarjeta</button>
+        </div>
+        
+        <button id="btn-cerrar-modal" class="btn-outline">Cancelar Operación</button>
     </div>
+</div>
 
     <script type="module" src="main.js"></script>
 </body>
