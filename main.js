@@ -92,6 +92,7 @@ const menusPorRestaurante = {
         {n: "Helado Frito", p: 4.50, cat: "Postres", img: "https://chefeel.com/chefgeneralfiles/2025/02/round-cake-with-ice-cream-inside-880x826.jpg"}
     ],
     'Sushi Kento': [
+        {n: "Edamame Salado", p: 3.50, cat: "Entradas", img: "https://images.unsplash.com/photo-1558980664-dfca2316e6d7?w=500&q=80"},
         {n: "Gyozas de Cerdo", p: 5.25, cat: "Entradas", img: "https://images.unsplash.com/photo-1496116218417-1a781b1c416c?w=500&q=80"},
         {n: "Yakitori de Pollo", p: 4.50, cat: "Entradas", img: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=500&q=80"},
         {n: "Sopa Miso", p: 3.00, cat: "Entradas", img: "https://images.unsplash.com/photo-1547592180-85f173990554?w=500&q=80"},
@@ -173,8 +174,19 @@ function construirGrafoBase() {
     mapaCiudad.agregarArista('Santa Tecla', 'Lourdes', 20);
     mapaCiudad.agregarArista('Santa Tecla', 'Santa Ana', 60); 
     mapaCiudad.agregarArista('San Salvador', 'San Miguel', 130); 
+    mapaCiudad.agregarArista('Santa Tecla', 'Zaragoza', 10);
+    mapaCiudad.agregarArista('Santa Ana', 'Chalchuapa', 14);
+    mapaCiudad.agregarArista('Santa Ana', 'Metapán', 45);
+    mapaCiudad.agregarArista('Santa Ana', 'Coatepeque', 20);
+    mapaCiudad.agregarArista('San Miguel', 'Ciudad Barrios', 25);
+    mapaCiudad.agregarArista('San Miguel', 'Chinameca', 18);
+    mapaCiudad.agregarArista('San Miguel', 'Nueva Guadalupe', 15);
 }
 construirGrafoBase();
+
+// PERSISTENCIA DE LA COLA 
+function guardarColaEnStorage() { localStorage.setItem('colaCentral', JSON.stringify(colaCentral.obtenerTodos())); }
+function cargarColaDeStorage() { const data = localStorage.getItem('colaCentral'); if (data) colaCentral.cargarDesdeStorage(JSON.parse(data)); } 
 
 // MAPA DINÁMICO
 async function inicializarMapaGlobal() {
@@ -221,12 +233,13 @@ async function inicializarMapaGlobal() {
         });
     });
 
-  nodesDataSet.add({ 
+    nodesDataSet.add({ 
         id: 'MOTO_RIDER', label: '🛵 Repartidor', shape: 'image', 
         image: 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f6f5.png', 
         size: 50, hidden: true, physics: false,
         font: { size: 14, bold: true, color: '#f59e0b', background: 'rgba(255,255,255,0.9)' }
     });
+
     // dezplasamiento mapa
     networkMapa = new vis.Network(contenedor, { nodes: nodesDataSet, edges: edgesDataSet }, {
         layout: { randomSeed: 999 }, 
@@ -536,14 +549,52 @@ window.onload = () => {
     
     const selD = document.getElementById('sel-depto');
     for(let d in datosDirecciones) { let o = document.createElement('option'); o.value=d; o.textContent=d; selD.appendChild(o); }
+    
     selD.addEventListener('change', () => {
-        const selM = document.getElementById('sel-muni'); selM.innerHTML = '<option>Municipio</option>'; selM.disabled = false;
-        for(let m in datosDirecciones[selD.value]) { let o = document.createElement('option'); o.value=m; o.textContent=m; selM.appendChild(o); }
+        const selM = document.getElementById('sel-muni'); 
+        selM.innerHTML = '<option value="">Seleccionar Municipio</option>'; 
+        selM.disabled = false;
+        document.getElementById('sel-casa').innerHTML = '<option value="">Número de Casa</option>';
+        document.getElementById('sel-casa').disabled = true;
+        
+        for(let m in datosDirecciones[selD.value]) { 
+            let o = document.createElement('option'); 
+            o.value=m; 
+            o.textContent=m; 
+            selM.appendChild(o); 
+        }
     });
     
-    document.getElementById('sel-muni').addEventListener('change', () => {
-        const selC = document.getElementById('sel-casa'); selC.disabled = false;
-        selC.innerHTML = Array.from({length:10}, (_,i)=>`<option value="Casa ${i+1}">Casa ${i+1}</option>`).join('');
+    // para no duplicar casas
+    document.getElementById('sel-muni').addEventListener('change', async () => {
+        const selC = document.getElementById('sel-casa'); 
+        selC.disabled = true;
+        selC.innerHTML = '<option>Cargando...</option>';
+        
+        const muniSeleccionado = document.getElementById('sel-muni').value;
+        if (!muniSeleccionado) return;
+        
+        const { data } = await supabase.from('usuarios').select('direccion').ilike('direccion', `%${muniSeleccionado}%`);
+        const casasOcupadas = data ? data.map(d => d.direccion.split(',')[0].trim()) : [];
+        
+        selC.innerHTML = '<option value="">Número de Casa</option>';
+        let hayCasasLibres = false;
+        
+        for(let i=1; i<=10; i++) {
+            let nombreCasa = `Casa ${i}`;
+            if(!casasOcupadas.includes(nombreCasa)) {
+                let o = document.createElement('option');
+                o.value = nombreCasa;
+                o.textContent = nombreCasa;
+                selC.appendChild(o);
+                hayCasasLibres = true;
+            }
+        }
+        
+        if(!hayCasasLibres) {
+            selC.innerHTML = '<option value="">Todas las casas están ocupadas</option>';
+        }
+        selC.disabled = false;
     });
 
     document.getElementById('btn-logout')?.addEventListener('click', () => { 
