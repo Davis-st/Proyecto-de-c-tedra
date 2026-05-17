@@ -216,6 +216,72 @@
             <button id="btn-cerrar-modal" class="btn-outline">Cancelar Operación</button>
         </div>
     </div>
+    <div id="modal-pago-glass" class="modal-overlay hidden">
+                    <button type="button" id="btn-cerrar-pago" class="btn-close">&times;</button>
+         <div class="modal-content-glass">
+            <div class="tarjeta-contenedor">
+                <div id="tarjeta-credito" class="tarjeta-interna">
+                    
+                    <div class="tarjeta-frente">
+                        <div class="tarjeta-header" style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="chip"></span>
+                            <span class="banco-logo">PREMIUM BANK</span>
+                        </div>
+                        <div class="tarjeta-numero" id="vista-numero">•••• •••• •••• ••••</div>
+                        <div class="tarjeta-footer">
+                            <div class="grupo">
+                                <label>Titular</label>
+                                <div class="val" id="vista-nombre">NOMBRE APELLIDO</div>
+                            </div>
+                            <div class="grupo">
+                                <label>Expira</label>
+                                <div class="val" id="vista-expiracion">MM/AA</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tarjeta-atras">
+                        <div class="barra-magnetica"></div>
+                        <div class="tarjeta-cvv-seccion">
+                            <label>CVV</label>
+                            <div class="cvv-caja" id="vista-cvv">•••</div>
+                        </div>
+                        <div class="tarjeta-atras-footer">
+                            <span>Billetera El Salvador S.A.</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <form id="form-pago-tarjeta" class="form-pago">
+                <h3>Detalles de Pago</h3>
+                
+                <div class="input-group">
+                    <label>Número de Tarjeta</label>
+                    <input type="text" id="input-numero" maxlength="19" placeholder="4152 0000 0000 0000" autocomplete="off" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Nombre del Titular</label>
+                    <input type="text" id="input-nombre" placeholder="Juan Pérez" autocomplete="off" required>
+                </div>
+
+                <div class="form-fila">
+                    <div class="input-group">
+                        <label>Expiración</label>
+                        <input type="text" id="input-expiracion" maxlength="5" placeholder="MM/AA" autocomplete="off" required>
+                    </div>
+                    <div class="input-group">
+                        <label>CVV</label>
+                        <input type="text" id="input-cvv" maxlength="4" placeholder="123" autocomplete="off" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-pagar-final">Procesar Pago con Tarjeta</button>
+            </form>
+        </div>
+    </div>
 
     <script type="module" src="main.js"></script>
 </body>

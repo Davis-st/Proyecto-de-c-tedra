@@ -3,7 +3,9 @@ import { Cliente, Repartidor } from './Estructuras/Usuarios.js';
 import { ArbolBusquedaMenu } from './Estructuras/ArbolBusqueda.js';
 import { GrafoRutas } from './Estructuras/Grafo.js';
 
-// --- CONFIGURACIÓN SUPABASE ---
+// ==========================================
+// 1. CONFIGURACIÓN E INSTANCIAS GLOBALES
+// ==========================================
 const SUPABASE_URL = 'https://nybdoaclmzdfqeaefgxx.supabase.co'; 
 const SUPABASE_KEY = 'sb_publishable_JIUJgw-34pVpDNE8yxdNlQ_xz3vSxzu';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -16,14 +18,14 @@ let usuarioLogueado = null;
 let carritoLocal = [];
 let trackingInterval = null; 
 
-// VARIABLES PARA EL MAPA 
+// Variables para Vis.js
 let nodesDataSet = new vis.DataSet();
 let edgesDataSet = new vis.DataSet();
 let networkMapa = null; 
 let ordenSimuladaId = null; 
 let timerSimulacion = null;
 
-// CATÁLOGO DE COMIDAS 
+// Catálogo de Comidas
 const menusPorRestaurante = {
     'Pizzeria La Toscana': [
         {n: "Pan con Ajo Supremo", p: 3.50, cat: "Entradas", img: "https://i.ytimg.com/vi/cNmckVGQ9pg/maxresdefault.jpg"},
@@ -92,47 +94,47 @@ const menusPorRestaurante = {
         {n: "Helado Frito", p: 4.50, cat: "Postres", img: "https://chefeel.com/chefgeneralfiles/2025/02/round-cake-with-ice-cream-inside-880x826.jpg"}
     ],
     'Sushi Kento': [
-        {n: "Edamame Salado", p: 3.50, cat: "Entradas", img: "https://images.unsplash.com/photo-1558980664-dfca2316e6d7?w=500&q=80"},
+        {n: "Edamame Salado", p: 3.50, cat: "Entradas", img: "https://i.blogs.es/0655c9/edamame/650_1200.jpg"},
         {n: "Gyozas de Cerdo", p: 5.25, cat: "Entradas", img: "https://images.unsplash.com/photo-1496116218417-1a781b1c416c?w=500&q=80"},
-        {n: "Yakitori de Pollo", p: 4.50, cat: "Entradas", img: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=500&q=80"},
-        {n: "Sopa Miso", p: 3.00, cat: "Entradas", img: "https://images.unsplash.com/photo-1547592180-85f173990554?w=500&q=80"},
-        {n: "Camarones Tempura", p: 6.50, cat: "Entradas", img: "https://images.unsplash.com/photo-1615361200141-f45040f367be?w=500&q=80"},
+        {n: "Yakitori de Pollo", p: 4.50, cat: "Entradas", img: "https://static.bainet.es/clip/1b9d8d61-05ca-43b7-afa0-eedc418e922e_source-aspect-ratio_1600w_0.jpg"},
+        {n: "Sopa Miso", p: 3.00, cat: "Entradas", img: "https://recetasdecocina.elmundo.es/wp-content/uploads/2025/03/sopa-de-miso-1024x683.jpg"},
+        {n: "Camarones Tempura", p: 6.50, cat: "Entradas", img: "https://preview.redd.it/air-fryer-fresh-tempura-shrimps-v0-tb3gnokqlwqe1.jpg?width=640&crop=smart&auto=webp&s=7a6a2ea7a45f7ee8973ae8ebd877d147cad7e06e"},
         {n: "Roll California", p: 7.00, cat: "Platos Fuertes", img: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=500&q=80"},
         {n: "Roll Spicy Tuna", p: 8.50, cat: "Platos Fuertes", img: "https://images.unsplash.com/photo-1553621042-f6e147245754?w=500&q=80"},
         {n: "Ramen Tonkotsu", p: 10.00, cat: "Platos Fuertes", img: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=500&q=80"},
-        {n: "Yakisoba Mixto", p: 9.50, cat: "Platos Fuertes", img: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=500&q=80"},
-        {n: "Nigiri de Salmón", p: 6.00, cat: "Platos Fuertes", img: "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=500&q=80"},
-        {n: "Té Verde Matcha", p: 2.50, cat: "Bebidas", img: "https://images.unsplash.com/photo-1515823662972-da6a2e4d3002?w=500&q=80"},
+        {n: "Yakisoba Mixto", p: 9.50, cat: "Platos Fuertes", img: "https://tofuu.getjusto.com/orioneat-local/resized2/3bF2T8G2pTokvKebE-2400-x.webp"},
+        {n: "Nigiri de Salmón", p: 6.00, cat: "Platos Fuertes", img: "https://www.hosteleriasalamanca.es/fotos/14610815912.jpg"},
+        {n: "Té Verde Matcha", p: 2.50, cat: "Bebidas", img: "https://aarp.widen.net/content/bhaumlurgz/jpeg/StockFood_11115230_HiRes_Matcha_tea_in_a_tea_bowl_served_with_tea_flavoured_madeleines.jpg?crop=true&anchor=17,111&q=80&color=ffffffff&u=2xkwh0&w=2006&h=1142"},
         {n: "Calpis Soda", p: 3.00, cat: "Bebidas", img: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500&q=80"},
-        {n: "Sake Tradicional", p: 5.00, cat: "Bebidas", img: "https://images.unsplash.com/photo-1560155016-bd4879ae8f21?w=500&q=80"},
+        {n: "Sake Tradicional", p: 5.00, cat: "Bebidas", img: "https://neodrinks.com/wp-content/uploads/2020/09/sake-japones.jpg"},
         {n: "Cerveza Sapporo", p: 4.50, cat: "Bebidas", img: "https://images.unsplash.com/photo-1608270586620-248524c67de9?w=500&q=80"},
         {n: "Agua Evian", p: 2.00, cat: "Bebidas", img: "https://www.sportlife.es/uploads/s1/10/96/81/39/beneficios-de-beber-agua-con-gas.jpeg"},
-        {n: "Mochi de Fresa", p: 4.00, cat: "Postres", img: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=500&q=80"},
-        {n: "Helado de Té Verde", p: 3.50, cat: "Postres", img: "https://images.unsplash.com/photo-1505394033641-40c6ad1178d7?w=500&q=80"},
-        {n: "Taiyaki Chocolate", p: 4.50, cat: "Postres", img: "https://media-cdn.tripadvisor.com/media/photo-s/1a/48/38/34/nutella-calzone.jpg"},
+        {n: "Mochi de Fresa", p: 4.00, cat: "Postres", img: "https://i0.wp.com/thehappening.com/wp-content/uploads/2018/06/mochi-fresa-receta.jpg?fit=1024%2C694&ssl=1"},
+        {n: "Helado de Té Verde", p: 3.50, cat: "Postres", img: "https://okdiario.com/img/recetas/2017/11/05/helado-de-te-matcha.jpg"},
+        {n: "Taiyaki Chocolate", p: 4.50, cat: "Postres", img: "https://japanese-snacks-republic.com/media/binary/000/017/585/17585.jpg"},
         {n: "Dorayaki Vainilla", p: 3.75, cat: "Postres", img: "https://static.bainet.es/clip/4896efa6-ec52-4ffe-ab1c-9b789353e444_source-aspect-ratio_1600w_0.jpg"},
         {n: "Cheesecake Japonés", p: 5.50, cat: "Postres", img: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=500&q=80"}
     ],
     'Asados Don Chepe': [
-        {n: "Chorizos Parrilleros", p: 4.50, cat: "Entradas", img: "https://images.unsplash.com/photo-1544025162-d76694265947?w=500&q=80"},
+        {n: "Chorizos Parrilleros", p: 4.50, cat: "Entradas", img: "https://walmartsv.vtexassets.com/arquivos/ids/759954/50490_03.jpg?v=638871516454330000"},
         {n: "Queso Fundido", p: 5.00, cat: "Entradas", img: "https://realfoodbydad.com/wp-content/uploads/2019/03/Chorizo-Queso-Fundido-Real-Food-by-Dad-683x1024.jpg"},
-        {n: "Yuca Frita", p: 3.00, cat: "Entradas", img: "https://images.unsplash.com/photo-1576107232684-1279f390859f?w=500&q=80"},
-        {n: "Ceviche de Chicharrón", p: 6.00, cat: "Entradas", img: "https://enmicasa.com/wp-content/uploads/2020/07/chicharrones-de-queso_ho.jpg"},
-        {n: "Empanadas de Carne", p: 4.25, cat: "Entradas", img: "https://images.unsplash.com/photo-1615361200141-f45040f367be?w=500&q=80"},
+        {n: "Yuca Frita", p: 3.00, cat: "Entradas", img: "https://i.ytimg.com/vi/dp6oQ7cekPc/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLD_uCGqj37uh-_NzS1hLcYF4KvUxA"},
+        {n: "Ceviche de Chicharrón", p: 6.00, cat: "Entradas", img: "https://cloudfront-us-east-1.images.arcpublishing.com/infobae/FHCVEODO6VE6JHTFGHS6W5HIAE.jpg"},
+        {n: "Empanadas de Carne", p: 4.25, cat: "Entradas", img: "https://comidasparaguayas.com/assets/images/empanada-de-carne_800x534.webp"},
         {n: "Parrillada Familiar", p: 25.00, cat: "Platos Fuertes", img: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=500&q=80"},
-        {n: "Churrasco Especial", p: 14.50, cat: "Platos Fuertes", img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80"},
+        {n: "Churrasco Especial", p: 14.50, cat: "Platos Fuertes", img: "https://progcarne.com/storage/app/uploads/public/60f/9c4/c89/60f9c4c89a68e000121704.jpg"},
         {n: "Punta Jalapeña", p: 12.00, cat: "Platos Fuertes", img: "https://images.unsplash.com/photo-1594041680534-e8c8cdebd659?w=500&q=80"},
-        {n: "Pollo a la Brasa", p: 9.50, cat: "Platos Fuertes", img: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=500&q=80"},
+        {n: "Pollo a la Brasa", p: 9.50, cat: "Platos Fuertes", img: "https://buenprovecho.hn/wp-content/uploads/2023/07/Pollo-a-la-brasa-1.png"},
         {n: "Costillas de Cerdo", p: 13.00, cat: "Platos Fuertes", img: "https://images.unsplash.com/photo-1544025162-d76694265947?w=500&q=80"},
         {n: "Horchata Salvadoreña", p: 2.00, cat: "Bebidas", img: "https://cdn0.recetasgratis.net/es/posts/5/7/3/agua_de_horchata_74375_1200.jpg"},
-        {n: "Cebada Fría", p: 2.00, cat: "Bebidas", img: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500&q=80"},
+        {n: "Cebada Fría", p: 2.00, cat: "Bebidas", img: "https://www.tipicosmargoth.com/wp-content/uploads/2020/05/MEDIO-GALON-CEBEDA-TIPICOS-MARGOTH.jpg"},
         {n: "Cerveza Suprema", p: 3.50, cat: "Bebidas", img: "https://images.unsplash.com/photo-1608270586620-248524c67de9?w=500&q=80"},
-        {n: "Jugo de Naranja", p: 1.50, cat: "Bebidas", img: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500&q=80"},
-        {n: "Limonada Rosa", p: 2.50, cat: "Bebidas", img: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=500&q=80"},
+        {n: "Jugo de Naranja", p: 1.50, cat: "Bebidas", img: "https://media.glamour.mx/photos/653836ba50e780930c5400e8/master/pass/tomar-jugo-de-naranja-beneficios.jpg"},
+        {n: "Limonada Rosa", p: 2.50, cat: "Bebidas", img: "https://instituto.splenda.la/wp-content/uploads/2024/03/limonada-rosa.jpg"},
         {n: "Flan de Caramelo", p: 3.00, cat: "Postres", img: "https://images.aws.nestle.recipes/original/9a7b5fb66b5ac1fba45399b73fe16374_flan_napolitano_ligero.jpg"},
         {n: "Tres Leches Borracho", p: 4.50, cat: "Postres", img: "https://www.modernhoney.com/wp-content/uploads/2024/10/Tres-Leches-Cake-18-500x500.jpg"},
-        {n: "Pastel de Chocolate", p: 3.75, cat: "Postres", img: "https://i.ytimg.com/vi/PSZRYnzWga4/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLCHU04hi1I-98p_XFtEYPNQdLdIKA"},
-        {n: "Dulce de Leche", p: 2.50, cat: "Postres", img: "https://www.cardamomo.news/__export/1710873469286/sites/debate/img/2024/03/19/platano_frito_con_crema_y_queso.png_557707261.png"},
+        {n: "Pastel de Chocolate", p: 3.75, cat: "Postres", img: "https://www.verybestbaking.com/sites/g/files/jgfbjl326/files/styles/large/public/recipe-thumbnail/103679-2020_06_09T08_18_01_mrs_ImageRecipes_1810lrg.jpg?itok=DR3HQYQ1"},
+        {n: "Dulce de Leche", p: 2.50, cat: "Postres", img: "https://content-cocina.lecturas.com/medio/2018/07/19/dulce-de-leche-tradicional-con-leche-entera_712d6b64_600x600.jpg"},
         {n: "Empanadas de Leche", p: 3.00, cat: "Postres", img: "https://chefeel.com/chefgeneralfiles/2025/02/round-cake-with-ice-cream-inside-880x826.jpg"}
     ]
 };
@@ -144,7 +146,7 @@ function obtenerRestauranteDePlatillo(nombrePlato) {
     return "Pizzeria La Toscana"; 
 }
 
-// TOPOLOGÍA NACIONAL
+// Topología Geográfica (El Salvador)
 const datosDirecciones = {
     "San Salvador": { "San Salvador": 10, "Soyapango": 10, "Ilopango": 10, "Apopa": 10 },
     "La Libertad": { "Santa Tecla": 10, "Antiguo Cuscatlán": 10, "Zaragoza": 10, "Lourdes": 10 },
@@ -152,7 +154,6 @@ const datosDirecciones = {
     "San Miguel": { "San Miguel": 10, "Ciudad Barrios": 10, "Chinameca": 10, "Nueva Guadalupe": 10 }
 };
 
-//ARQUITECTURA DEL GRAFO 
 function construirGrafoBase() {
     mapaCiudad.agregarNodo('Pizzeria La Toscana');
     mapaCiudad.agregarNodo('Burger House Gourmet');
@@ -184,11 +185,9 @@ function construirGrafoBase() {
 }
 construirGrafoBase();
 
-// PERSISTENCIA DE LA COLA 
-function guardarColaEnStorage() { localStorage.setItem('colaCentral', JSON.stringify(colaCentral.obtenerTodos())); }
-function cargarColaDeStorage() { const data = localStorage.getItem('colaCentral'); if (data) colaCentral.cargarDesdeStorage(JSON.parse(data)); } 
-
-// MAPA DINÁMICO
+// ==========================================
+// 2. SISTEMA DE MAPA DINÁMICO (VIS.JS)
+// ==========================================
 async function inicializarMapaGlobal() {
     const contenedor = document.getElementById('mapa-nodos');
     if (!contenedor || networkMapa !== null) return; 
@@ -197,11 +196,13 @@ async function inicializarMapaGlobal() {
     if (usuarios) {
         usuarios.forEach(user => {
             const muni = user.direccion.split(", ")[1] || user.direccion;
-            mapaCiudad.agregarArista(muni, user.direccion, 2);
+            // Evitar duplicados en memoria en el objeto GrafoRutas
+            if (!mapaCiudad.adyacencias.get(muni)?.some(v => v.nodo === user.direccion)) {
+                mapaCiudad.agregarArista(muni, user.direccion, 2);
+            }
         });
     }
 
-    // Dibujar Nodos con Imágenes 
     mapaCiudad.nodos.forEach(id => {
         let esRest = menusPorRestaurante[id] !== undefined;
         let esCasa = id.includes("Casa");
@@ -240,14 +241,9 @@ async function inicializarMapaGlobal() {
         font: { size: 14, bold: true, color: '#f59e0b', background: 'rgba(255,255,255,0.9)' }
     });
 
-    // dezplasamiento mapa
     networkMapa = new vis.Network(contenedor, { nodes: nodesDataSet, edges: edgesDataSet }, {
         layout: { randomSeed: 999 }, 
-        interaction: { 
-            dragNodes: false, // bloquear mapa
-            dragView: true,   // arrastrar mapa
-            zoomView: true    // zoom en mapa
-        },
+        interaction: { dragNodes: false, dragView: true, zoomView: true },
         physics: { solver: 'forceAtlas2Based', forceAtlas2Based: { springLength: 120 } }
     });
 
@@ -257,11 +253,16 @@ async function inicializarMapaGlobal() {
     });
 }
 
-// RASTREO Y SIMULACIÓN
+// ==========================================
+// 3. RASTREO Y ANIMACIONES EN TIEMPO REAL
+// ==========================================
 async function iniciarRastreoEnVivo() {
     const icono = document.getElementById('tracking-icono');
     const texto = document.getElementById('tracking-texto');
     const desc = document.getElementById('tracking-desc');
+
+    // Solución al bug de duplicación de hilos (Polling)
+    if(trackingInterval) clearInterval(trackingInterval);
 
     trackingInterval = setInterval(async () => {
         const filtro = usuarioLogueado.rol === 'cliente' ? { col: 'cliente', val: usuarioLogueado.usuario } : { col: 'repartidor', val: usuarioLogueado.usuario };
@@ -272,7 +273,6 @@ async function iniciarRastreoEnVivo() {
             
             if(p.estado === 'En Camino' && ordenSimuladaId !== p.id) {
                 ordenSimuladaId = p.id;
-                
                 let restaurantes = p.restaurante.split(" | ");
                 let rutaCompleta = [];
                 let distanciaTotal = 0;
@@ -288,7 +288,6 @@ async function iniciarRastreoEnVivo() {
                 }
 
                 animarMotoEnMapa(rutaCompleta, p.id, distanciaTotal);
-                
                 icono.textContent = "🛵"; texto.textContent = "¡Repartidor en Camino!";
                 desc.textContent = `Pasando por: ${restaurantes.join(", ")} ➔ Destino.`;
             } 
@@ -321,7 +320,8 @@ function animarMotoEnMapa(ruta, idPedido, distanciaTotal) {
     timerSimulacion = setInterval(async () => {
         if(pasoActual >= ruta.length) {
             clearInterval(timerSimulacion);
-            if(usuarioLogueado.rol === 'delivery') {
+            // Homologación de validación de rol de instancia de clase
+            if(usuarioLogueado.rol === 'repartidor' || usuarioLogueado.rol === 'delivery') {
                 await supabase.from('historialpedidos').update({ estado: 'Entregado' }).eq('id', idPedido);
                 alert("¡Has llegado al destino! Orden marcada como entregada.");
                 cambiarVista('vista-panel-delivery'); 
@@ -331,14 +331,16 @@ function animarMotoEnMapa(ruta, idPedido, distanciaTotal) {
 
         let nodoPos = ruta[pasoActual];
         let pos = networkMapa.getPositions([nodoPos])[nodoPos];
-        
-        nodesDataSet.update({ id: 'MOTO_RIDER', x: pos.x, y: pos.y - 30 }); 
+        if(pos) {
+            nodesDataSet.update({ id: 'MOTO_RIDER', x: pos.x, y: pos.y - 30 }); 
+        }
         pasoActual++;
-
     }, 2500); 
 }
 
-// --- GESTIÓN DE VISTAS ---
+// ==========================================
+// 4. GESTIÓN DE INTERFAZ Y VISTAS (SPA)
+// ==========================================
 window.cambiarVista = (idVista) => {
     document.querySelectorAll('.vista').forEach(v => v.style.display = 'none');
     document.getElementById(idVista).style.display = 'block';
@@ -362,19 +364,19 @@ function configurarDashboardPorRol() {
     cambiarVista(config.vistaInicial);
 }
 
-// --- PANEL CONTROL DELIVERY ---
+// Panel Control Delivery
 async function renderizarPanelDelivery() {
     const lista = document.getElementById('lista-pedidos-unica');
     lista.innerHTML = "<p>Cargando pedidos de la base de datos...</p>";
 
     const { data } = await supabase.from('historialpedidos').select('*').eq('estado', 'Pendiente');
     
-    colaCentral.cargarDesdeStorage([]);
-    
     if (data && data.length > 0) {
-        data.forEach(p => {
-            colaCentral.encolar({ db_id: p.id, cliente: p.cliente, prioridad: p.prioridad, restaurante: p.restaurante, destino: p.destino });
-        });
+        // Corrección: Guardamos temporalmente en storage para asegurar resiliencia
+        localStorage.setItem('colaCentral', JSON.stringify(data));
+        colaCentral.cargarDesdeStorage(data.map(p => ({ db_id: p.id, cliente: p.cliente, prioridad: p.prioridad, restaurante: p.restaurante, destino: p.destino })));
+    } else {
+        colaCentral.cargarDesdeStorage([]);
     }
 
     if (colaCentral.estaVacia()) return lista.innerHTML = "<p>No hay pedidos pendientes.</p>";
@@ -400,14 +402,16 @@ document.getElementById('btn-atender-siguiente')?.addEventListener('click', asyn
     cambiarVista('vista-rastreo-cliente');
 });
 
-// COMPRAS Y CARRITO
+// ==========================================
+// 5. COMPRAS Y SISTEMA DE CARRITO
+// ==========================================
 function renderizarCarritoUI() {
     const contenedor = document.getElementById('contenedor-carrito');
     if (!contenedor) return;
     if (carritoLocal.length === 0) { contenedor.innerHTML = "<p style='color:gray; padding:10px;'>Tu orden está vacía.</p>"; actualizarPreciosUI(); return; }
 
     contenedor.innerHTML = carritoLocal.map((item, index) => `
-        <div class="item-carrito" style="display:flex; justify-content:between; align-items:center; margin-bottom:8px; padding:5px; border-bottom:1px solid #eee;">
+        <div class="item-carrito" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; padding:5px; border-bottom:1px solid #eee;">
             <div style="flex:1;">
                 <span style="font-weight:bold; display:block;">${item.nombre}</span>
                 <span style="color:#666; font-size:0.85rem;">$${(item.precio * item.cantidad).toFixed(2)}</span>
@@ -448,28 +452,40 @@ document.getElementById('btn-abrir-pago')?.addEventListener('click', () => {
 document.getElementById('btn-cerrar-modal')?.addEventListener('click', () => document.getElementById('modal-pago').style.display = 'none');
 document.getElementById('check-vip')?.addEventListener('change', actualizarPreciosUI);
 
+// Lógica de inserción centralizada en Supabase
 async function procesarPago() {
     const isVip = document.getElementById('check-vip').checked;
     const restaurantesDelPedido = [...new Set(carritoLocal.map(item => obtenerRestauranteDePlatillo(item.nombre)))];
     const stringRestaurantes = restaurantesDelPedido.join(" | ");
     const descripcionOrden = carritoLocal.map(item => `${item.cantidad}x ${item.nombre}`).join(", ");
     
-    const { data, error } = await supabase.from('historialpedidos').insert([{
+    const { error } = await supabase.from('historialpedidos').insert([{
         cliente: usuarioLogueado.usuario, restaurante: stringRestaurantes,  
         destino: usuarioLogueado.direccion, descripcion: descripcionOrden, 
         prioridad: isVip ? 1 : 2, estado: 'Pendiente'
-    }]).select();
+    }]);
 
-    if(error) return alert("Error en el pago.");
+    if(error) {
+        alert("Error en el pago.");
+        return false;
+    }
 
-    carritoLocal = []; renderizarCarritoUI(); document.getElementById('modal-pago').style.display = 'none';
-    alert("¡Pedido Pagado con éxito!"); cambiarVista('vista-rastreo-cliente');
+    carritoLocal = []; 
+    renderizarCarritoUI(); 
+    document.getElementById('modal-pago').style.display = 'none';
+    alert("¡Pedido Pagado con éxito!"); 
+    cambiarVista('vista-rastreo-cliente');
+    return true;
 }
 
 document.getElementById('btn-pago-efectivo')?.addEventListener('click', procesarPago);
-document.getElementById('btn-pago-tarjeta')?.addEventListener('click', procesarPago);
+document.getElementById('btn-pago-tarjeta')?.addEventListener('click', () => {
+    abrirModalPagoTarjeta();
+});
 
-// --- CONTROL DE USUARIOS ---
+// ==========================================
+// 6. CONTROL DE USUARIOS Y MENÚS
+// ==========================================
 document.getElementById('btn-registro-submit')?.addEventListener('click', async () => {
     const u = document.getElementById('reg-usuario').value; const p = document.getElementById('reg-pass').value;
     const r = document.getElementById('reg-rol').value;
@@ -514,6 +530,9 @@ async function cargarHistorialDelivery() {
     c.innerHTML = data.map(p => `<div class="panel" style="margin-bottom:10px; padding:15px; border-left:5px solid #27dec9;"><strong>Entrega #${p.id} para ${p.cliente}</strong><p>📍 ${p.destino}</p></div>`).join('');
 }
 
+// ==========================================
+// 7. INICIALIZACIÓN DE LA APLICACIÓN (ONLOAD)
+// ==========================================
 window.onload = () => {
     const sesion = localStorage.getItem('sesionActiva'); 
     if (sesion) { 
@@ -565,7 +584,6 @@ window.onload = () => {
         }
     });
     
-    // para no duplicar casas
     document.getElementById('sel-muni').addEventListener('change', async () => {
         const selC = document.getElementById('sel-casa'); 
         selC.disabled = true;
@@ -606,3 +624,86 @@ window.onload = () => {
     document.getElementById('signUp')?.addEventListener('click', () => container.classList.add("right-panel-active"));
     document.getElementById('signIn')?.addEventListener('click', () => container.classList.remove("right-panel-active"));
 };
+
+// ==========================================
+// 8. FORMULARIO REACTIVO DE TARJETA (3D)
+// ==========================================
+const modalPago = document.getElementById('modal-pago-glass');
+const btnCerrarPago = document.getElementById('btn-cerrar-pago');
+const tarjetaCreditoEl = document.getElementById('tarjeta-credito');
+const formPagoTarjeta = document.getElementById('form-pago-tarjeta');
+
+const inputNumero = document.getElementById('input-numero');
+const inputNombre = document.getElementById('input-nombre');
+const inputExpiracion = document.getElementById('input-expiracion');
+const inputCvv = document.getElementById('input-cvv');
+
+const vistaNumero = document.getElementById('vista-numero');
+const vistaNombre = document.getElementById('vista-nombre');
+const vistaExpiracion = document.getElementById('vista-expiracion');
+const vistaCvv = document.getElementById('vista-cvv');
+
+function abrirModalPagoTarjeta() {
+    modalPago.classList.remove('hidden');
+}
+
+btnCerrarPago.addEventListener('click', () => {
+    modalPago.classList.add('hidden');
+    formPagoTarjeta.reset();
+    resetearTarjetaIlustrada();
+});
+
+function resetearTarjetaIlustrada() {
+    vistaNumero.textContent = "•••• •••• •••• ••••";
+    vistaNombre.textContent = "NOMBRE APELLIDO";
+    vistaExpiracion.textContent = "MM/AA";
+    vistaCvv.textContent = "•••";
+    tarjetaCreditoEl.classList.remove('girar');
+}
+
+inputNumero.addEventListener('input', (e) => {
+    let valor = e.target.value.replace(/\D/g, ''); 
+    let valorFormateado = valor.match(/.{1,4}/g)?.join(' ') || '';
+    e.target.value = valorFormateado;
+    vistaNumero.textContent = valorFormateado || "•••• •••• •••• ••••";
+});
+
+inputNombre.addEventListener('input', (e) => {
+    vistaNombre.textContent = e.target.value.toUpperCase() || "NOMBRE APELLIDO";
+});
+
+inputExpiracion.addEventListener('input', (e) => {
+    let valor = e.target.value.replace(/\D/g, '');
+    if (valor.length > 2) {
+        valor = valor.substring(0, 2) + '/' + valor.substring(2, 4);
+    }
+    e.target.value = valor;
+    vistaExpiracion.textContent = valor || "MM/AA";
+});
+
+inputCvv.addEventListener('input', (e) => {
+    let valor = e.target.value.replace(/\D/g, '');
+    e.target.value = valor;
+    vistaCvv.textContent = valor || "•••";
+});
+
+inputCvv.addEventListener('focus', () => { tarjetaCreditoEl.classList.add('girar'); });
+inputCvv.addEventListener('blur', () => { tarjetaCreditoEl.classList.remove('girar'); });
+
+// Corrección al envío: Ahora sincroniza la pasarela simulada con Supabase
+formPagoTarjeta.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    alert("🚀 ¡Pago Autorizado Correctamente por el Banco! Procesando orden...");
+    
+    // Ejecutamos la carga real de datos heredada de la Parte 2
+    const exito = await procesarPago();
+    
+    if (exito) {
+        modalPago.classList.add('hidden');
+        formPagoTarjeta.reset();
+        resetearTarjetaIlustrada();
+        // Cerramos también el modal de selección de método de pago anterior
+        document.getElementById('modal-pago').style.display = 'none';
+    }
+});
