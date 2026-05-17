@@ -484,11 +484,57 @@ document.getElementById('btn-pago-tarjeta')?.addEventListener('click', () => {
 //CONTROL DE USUARIOS Y MENÚS
 
 document.getElementById('btn-registro-submit')?.addEventListener('click', async () => {
-    const u = document.getElementById('reg-usuario').value; const p = document.getElementById('reg-pass').value;
+    // 1. Capturar y limpiar valores de texto básicos
+    const u = document.getElementById('reg-usuario').value.trim(); 
+    const p = document.getElementById('reg-pass').value.trim();
     const r = document.getElementById('reg-rol').value;
-    const d = r === 'cliente' ? `${document.getElementById('sel-casa').value}, ${document.getElementById('sel-muni').value}` : 'Central Operativa';
-    const { error } = await supabase.from('usuarios').insert([{ usuario: u, password: p, rol: r, direccion: d }]);
-    if(error) alert("Error al registrar."); else { alert("¡Registrado con éxito!"); location.reload(); }
+
+    // 2. Validar credenciales básicas
+    if (u === "" || p === "") {
+        return alert("⚠️ Por favor, ingresa un nombre de usuario y una contraseña.");
+    }
+
+    if (p.length < 4) {
+        return alert("⚠️ La contraseña debe tener al menos 4 caracteres por seguridad.");
+    }
+
+    // 3. Validar Dirección según el Rol elegido
+    let d = 'Central Operativa'; // Valor por defecto si es repartidor/delivery
+
+    if (r === 'cliente') {
+        const depto = document.getElementById('sel-depto').value;
+        const muni = document.getElementById('sel-muni').value;
+        const casa = document.getElementById('sel-casa').value;
+
+        // Validar que se haya seleccionado una opción real en cada select
+        if (!depto || depto === "" || depto.includes("Seleccionar")) {
+            return alert("📍 Debes seleccionar un Departamento para tu entrega.");
+        }
+        if (!muni || muni === "" || muni.includes("Seleccionar")) {
+            return alert("📍 Debes seleccionar un Municipio válido.");
+        }
+        if (!casa || casa === "" || casa.includes("Número de Casa") || casa.includes("ocupadas")) {
+            return alert("📍 Debes seleccionar un número de Casa disponible.");
+        }
+
+        // Si todo está perfecto, formateamos la dirección limpia
+        d = `${casa}, ${muni}, ${depto}`;
+    }
+
+    // 4. Proceder con el registro en Supabase solo si pasó todos los filtros
+    const { error } = await supabase.from('usuarios').insert([{ 
+        usuario: u, 
+        password: p, 
+        rol: r, 
+        direccion: d 
+    }]);
+
+    if (error) {
+        alert("❌ Error al registrar: El usuario podría estar duplicado o hubo un problema de conexión.");
+    } else { 
+        alert("🎉 ¡Registrado con éxito! Ya puedes iniciar sesión."); 
+        location.reload(); 
+    }
 });
 
 document.getElementById('btn-login-submit')?.addEventListener('click', async () => {
