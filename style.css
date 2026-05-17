@@ -373,7 +373,7 @@ input[type="checkbox"] { width: auto; margin: 0 10px 0 0; transform: scale(1.3);
     filter: drop-shadow(0px 6px 12px rgba(0, 0, 0, 0.2));
 }
 
-/* --- CONTENEDOR DE FONDO (Fondo oscuro y desenfoque) --- */
+/* --- CONTENEDOR DE FONDO */
 .modal-overlay {
     position: fixed;
     top: 0; 
@@ -395,7 +395,7 @@ input[type="checkbox"] { width: auto; margin: 0 10px 0 0; transform: scale(1.3);
     pointer-events: none; 
 }
 
-/* --- CUADRO PRINCIPAL DEL MODAL (Estilo Cristal) --- */
+/* CUADRO PRINCIPAL DEL MODAL */
 .modal-content-glass {
     background: rgba(255, 255, 255, 0.07);
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -405,12 +405,12 @@ input[type="checkbox"] { width: auto; margin: 0 10px 0 0; transform: scale(1.3);
     border-radius: 20px;
     padding: 30px; 
     width: 430px;
-    position: relative; /* 🚨 CRUCIAL: Ancla para que la X se ubique bien */
+    position: relative; 
     color: #fff;
     font-family: 'Nunito', sans-serif;
 }
 
-/* --- ❌ BOTÓN DE CERRAR (Ubicado arriba a la derecha) --- */
+/*  BOTÓN DE CERRAR  */
 .btn-close {
     position: absolute; 
     top: 5px; 
@@ -421,18 +421,18 @@ input[type="checkbox"] { width: auto; margin: 0 10px 0 0; transform: scale(1.3);
     font-size: 25px; 
     cursor: pointer; 
     opacity: 0.7;
-    z-index: 15; /* Fuerza a la X a quedarse por encima de la tarjeta */
+    z-index: 15; 
     transition: opacity 0.2s;
 }
 .btn-close:hover { 
     opacity: 1; 
 }
 
-/* --- 💳 ESTRUCTURA 3D DE LA TARJETA VIRTUAL --- */
+/*ESTRUCTURA 3D DE LA TARJETA VIRTUAL*/
 .tarjeta-contenedor {
     width: 100%; 
     height: 210px;
-    perspective: 1000px; /* Genera el espacio 3D para el giro */
+    perspective: 1000px; 
     margin-bottom: 25px;
 }
 .tarjeta-interna {
@@ -442,19 +442,19 @@ input[type="checkbox"] { width: auto; margin: 0 10px 0 0; transform: scale(1.3);
     transform-style: preserve-3d;
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
-/* Clase activada por JS cuando el usuario escribe el CVV */
+/* cuando el usuario escribe el CVV */
 .tarjeta-interna.girar {
     transform: rotateY(180deg);
 }
 
-/* --- CARAS DE LA TARJETA (Frente y Reverso) --- */
+/* CARAS DE LA TARJETA  */
 .tarjeta-frente, .tarjeta-atras {
     position: absolute; 
     width: 100%; 
     height: 100%;
     border-radius: 15px; 
     padding: 20px;
-    backface-visibility: hidden; /* Oculta la otra cara cuando gira */
+    backface-visibility: hidden; 
     display: flex; 
     flex-direction: column; 
     justify-content: space-between;
@@ -464,12 +464,12 @@ input[type="checkbox"] { width: auto; margin: 0 10px 0 0; transform: scale(1.3);
     box-shadow: 0 15px 35px rgba(0,0,0,0.2);
 }
 .tarjeta-atras {
-    transform: rotateY(180deg); /* El reverso empieza mirando hacia atrás */
+    transform: rotateY(180deg);
     padding: 20px 0; 
     justify-content: flex-start;
 }
 
-/* --- DETALLES DE LA TARJETA VIRTUAL (CHIP, LOGO, NÚMEROS) --- */
+/*DETALLES DE LA TARJETA VIRTUAL  */
 .chip {
     width: 40px; 
     height: 30px;
@@ -508,7 +508,7 @@ input[type="checkbox"] { width: auto; margin: 0 10px 0 0; transform: scale(1.3);
     text-transform: uppercase; 
 }
 
-/* --- REVERSO DE LA TARJETA (Banda y CVV) --- */
+/*REVERSO DE LA TARJETA */
 .barra-magnetica { 
     width: 100%; 
     height: 40px; 
@@ -545,7 +545,7 @@ input[type="checkbox"] { width: auto; margin: 0 10px 0 0; transform: scale(1.3);
     width: 100%; 
 }
 
-/* --- FORMULARIO DE TEXTBOXES --- */
+/*FORMULARIO DE TEXTBOXES */
 .form-pago h3 { 
     margin-top: 0; 
     margin-bottom: 15px; 
@@ -583,7 +583,7 @@ input[type="checkbox"] { width: auto; margin: 0 10px 0 0; transform: scale(1.3);
     flex: 1; 
 }
 
-/* --- BOTÓN AZUL PROCESAR --- */
+/* BOTÓN AZUL PROCESAR */
 .btn-pagar-final {
     width: 100%; 
     padding: 12px; 

@@ -146,7 +146,7 @@ function obtenerRestauranteDePlatillo(nombrePlato) {
     return "Pizzeria La Toscana"; 
 }
 
-// Topología Geográfica (El Salvador)
+// Topología Geográfica 
 const datosDirecciones = {
     "San Salvador": { "San Salvador": 10, "Soyapango": 10, "Ilopango": 10, "Apopa": 10 },
     "La Libertad": { "Santa Tecla": 10, "Antiguo Cuscatlán": 10, "Zaragoza": 10, "Lourdes": 10 },
@@ -185,9 +185,7 @@ function construirGrafoBase() {
 }
 construirGrafoBase();
 
-// ==========================================
-// 2. SISTEMA DE MAPA DINÁMICO (VIS.JS)
-// ==========================================
+
 async function inicializarMapaGlobal() {
     const contenedor = document.getElementById('mapa-nodos');
     if (!contenedor || networkMapa !== null) return; 
@@ -253,15 +251,15 @@ async function inicializarMapaGlobal() {
     });
 }
 
-// ==========================================
-// 3. RASTREO Y ANIMACIONES EN TIEMPO REAL
-// ==========================================
+
+//RASTREO Y ANIMACIONES EN TIEMPO REAL
+
 async function iniciarRastreoEnVivo() {
     const icono = document.getElementById('tracking-icono');
     const texto = document.getElementById('tracking-texto');
     const desc = document.getElementById('tracking-desc');
 
-    // Solución al bug de duplicación de hilos (Polling)
+
     if(trackingInterval) clearInterval(trackingInterval);
 
     trackingInterval = setInterval(async () => {
@@ -320,7 +318,6 @@ function animarMotoEnMapa(ruta, idPedido, distanciaTotal) {
     timerSimulacion = setInterval(async () => {
         if(pasoActual >= ruta.length) {
             clearInterval(timerSimulacion);
-            // Homologación de validación de rol de instancia de clase
             if(usuarioLogueado.rol === 'repartidor' || usuarioLogueado.rol === 'delivery') {
                 await supabase.from('historialpedidos').update({ estado: 'Entregado' }).eq('id', idPedido);
                 alert("¡Has llegado al destino! Orden marcada como entregada.");
@@ -338,9 +335,9 @@ function animarMotoEnMapa(ruta, idPedido, distanciaTotal) {
     }, 2500); 
 }
 
-// ==========================================
-// 4. GESTIÓN DE INTERFAZ Y VISTAS (SPA)
-// ==========================================
+
+// GESTIÓN DE INTERFAZ Y VISTAS 
+
 window.cambiarVista = (idVista) => {
     document.querySelectorAll('.vista').forEach(v => v.style.display = 'none');
     document.getElementById(idVista).style.display = 'block';
@@ -402,9 +399,9 @@ document.getElementById('btn-atender-siguiente')?.addEventListener('click', asyn
     cambiarVista('vista-rastreo-cliente');
 });
 
-// ==========================================
-// 5. COMPRAS Y SISTEMA DE CARRITO
-// ==========================================
+
+//COMPRAS Y SISTEMA DE CARRITO
+
 function renderizarCarritoUI() {
     const contenedor = document.getElementById('contenedor-carrito');
     if (!contenedor) return;
@@ -483,9 +480,9 @@ document.getElementById('btn-pago-tarjeta')?.addEventListener('click', () => {
     abrirModalPagoTarjeta();
 });
 
-// ==========================================
-// 6. CONTROL DE USUARIOS Y MENÚS
-// ==========================================
+
+//CONTROL DE USUARIOS Y MENÚS
+
 document.getElementById('btn-registro-submit')?.addEventListener('click', async () => {
     const u = document.getElementById('reg-usuario').value; const p = document.getElementById('reg-pass').value;
     const r = document.getElementById('reg-rol').value;
@@ -530,9 +527,9 @@ async function cargarHistorialDelivery() {
     c.innerHTML = data.map(p => `<div class="panel" style="margin-bottom:10px; padding:15px; border-left:5px solid #27dec9;"><strong>Entrega #${p.id} para ${p.cliente}</strong><p>📍 ${p.destino}</p></div>`).join('');
 }
 
-// ==========================================
-// 7. INICIALIZACIÓN DE LA APLICACIÓN (ONLOAD)
-// ==========================================
+
+// INICIALIZACIÓN DE LA APLICACIÓN 
+
 window.onload = () => {
     const sesion = localStorage.getItem('sesionActiva'); 
     if (sesion) { 
@@ -625,9 +622,8 @@ window.onload = () => {
     document.getElementById('signIn')?.addEventListener('click', () => container.classList.remove("right-panel-active"));
 };
 
-// ==========================================
-// 8. FORMULARIO REACTIVO DE TARJETA (3D)
-// ==========================================
+//FORMULARIO REACTIVO DE TARJETA (3D)
+
 const modalPago = document.getElementById('modal-pago-glass');
 const btnCerrarPago = document.getElementById('btn-cerrar-pago');
 const tarjetaCreditoEl = document.getElementById('tarjeta-credito');
@@ -690,13 +686,13 @@ inputCvv.addEventListener('input', (e) => {
 inputCvv.addEventListener('focus', () => { tarjetaCreditoEl.classList.add('girar'); });
 inputCvv.addEventListener('blur', () => { tarjetaCreditoEl.classList.remove('girar'); });
 
-// Corrección al envío: Ahora sincroniza la pasarela simulada con Supabase
+
 formPagoTarjeta.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     alert("🚀 ¡Pago Autorizado Correctamente por el Banco! Procesando orden...");
     
-    // Ejecutamos la carga real de datos heredada de la Parte 2
+
     const exito = await procesarPago();
     
     if (exito) {
