@@ -2,7 +2,6 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Logística Express</title>
     <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -533,6 +532,7 @@
             </div>
           </div>
         </div>
+
         <form id="form-pago-tarjeta" class="form-pago">
           <h3>Detalles de Pago</h3>
 
@@ -542,8 +542,6 @@
               type="text"
               id="input-numero"
               maxlength="19"
-              inputmode="numeric"
-              pattern="[0-9]*"
               placeholder="4152 0000 0000 0000"
               autocomplete="off"
               required
@@ -579,8 +577,6 @@
                 type="text"
                 id="input-cvv"
                 maxlength="4"
-                inputmode="numeric"
-                pattern="[0-9]*"
                 placeholder="123"
                 autocomplete="off"
                 required
