@@ -23,7 +23,7 @@ export class Cliente extends Usuario {
         super(usuario, 'cliente', direccion);
     }
 
-    // --- POLIMORFISMO ---
+  
     obtenerConfiguracionVista() {
         return {
             titulo: "Panel de Usuario",
@@ -39,7 +39,7 @@ export class Repartidor extends Usuario {
         super(usuario, 'delivery', 'Central Operativa');
     }
 
-    // --- POLIMORFISMO ---
+
     obtenerConfiguracionVista() {
         return {
             titulo: "Panel de Operaciones",
