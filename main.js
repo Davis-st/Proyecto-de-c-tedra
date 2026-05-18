@@ -3,9 +3,9 @@ import { Cliente, Repartidor } from './Estructuras/Usuarios.js';
 import { ArbolBusquedaMenu } from './Estructuras/ArbolBusqueda.js';
 import { GrafoRutas } from './Estructuras/Grafo.js';
 
-// ==========================================
-// 1. CONFIGURACIÓN E INSTANCIAS GLOBALES
-// ==========================================
+// CONFIGURACIÓN E INSTANCIAS GLOBALES
+
+// llaves supabase
 const SUPABASE_URL = 'https://nybdoaclmzdfqeaefgxx.supabase.co'; 
 const SUPABASE_KEY = 'sb_publishable_JIUJgw-34pVpDNE8yxdNlQ_xz3vSxzu';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -18,7 +18,7 @@ let usuarioLogueado = null;
 let carritoLocal = [];
 let trackingInterval = null; 
 
-// Variables para Vis.js
+
 let nodesDataSet = new vis.DataSet();
 let edgesDataSet = new vis.DataSet();
 let networkMapa = null; 
@@ -252,7 +252,7 @@ async function inicializarMapaGlobal() {
 }
 
 
-//RASTREO Y ANIMACIONES EN TIEMPO REAL
+//RASTREO Y ANIMACIONES 
 
 async function iniciarRastreoEnVivo() {
     const icono = document.getElementById('tracking-icono');
@@ -369,7 +369,6 @@ async function renderizarPanelDelivery() {
     const { data } = await supabase.from('historialpedidos').select('*').eq('estado', 'Pendiente');
     
     if (data && data.length > 0) {
-        // Corrección: Guardamos temporalmente en storage para asegurar resiliencia
         localStorage.setItem('colaCentral', JSON.stringify(data));
         colaCentral.cargarDesdeStorage(data.map(p => ({ db_id: p.id, cliente: p.cliente, prioridad: p.prioridad, restaurante: p.restaurante, destino: p.destino })));
     } else {
@@ -506,7 +505,7 @@ document.getElementById('btn-registro-submit')?.addEventListener('click', async 
         const muni = document.getElementById('sel-muni').value;
         const casa = document.getElementById('sel-casa').value;
 
-        // Validar que se haya seleccionado una opción real en cada select
+        // Validar que se haya seleccionado una opción real 
         if (!depto || depto === "" || depto.includes("Seleccionar")) {
             return alert("📍 Debes seleccionar un Departamento para tu entrega.");
         }
@@ -517,7 +516,6 @@ document.getElementById('btn-registro-submit')?.addEventListener('click', async 
             return alert("📍 Debes seleccionar un número de Casa disponible.");
         }
 
-        // Si todo está perfecto, formateamos la dirección limpia
         d = `${casa}, ${muni}, ${depto}`;
     }
 
@@ -551,7 +549,7 @@ document.getElementById('reg-rol')?.addEventListener('change', (e) => document.g
 
 function cargarMenu(restauranteId, categoriaFiltro = '') {
     const contenedor = document.getElementById('contenedor-menu');
-    if (categoriaFiltro === '') return contenedor.innerHTML = `<div style="text-align: center; padding: 30px; color: #888;"><span style="font-size: 3rem;">🍽️</span><h3>¡Tu estómago está listo!</h3><p>Selecciona una categoría.</p></div>`;
+    if (categoriaFiltro === '') return contenedor.innerHTML = `<div style="text-align: center; padding: 30px; color: #888;"><span style="font-size: 3rem;">🍽️</span><h3>Preparate para pedir</h3><p>Selecciona una categoría.</p></div>`;
     const items = menusPorRestaurante[restauranteId] || [];
     arbolMenu.limpiar(); items.forEach(prod => arbolMenu.insertar(prod));
     const prods = arbolMenu.filtrarPorCategoria(categoriaFiltro);
@@ -668,7 +666,7 @@ window.onload = () => {
     document.getElementById('signIn')?.addEventListener('click', () => container.classList.remove("right-panel-active"));
 };
 
-//FORMULARIO REACTIVO DE TARJETA (3D)
+//FORMULARIO REACTIVO DE TARJETA (
 
 const modalPago = document.getElementById('modal-pago-glass');
 const btnCerrarPago = document.getElementById('btn-cerrar-pago');
@@ -745,7 +743,6 @@ formPagoTarjeta.addEventListener('submit', async (e) => {
         modalPago.classList.add('hidden');
         formPagoTarjeta.reset();
         resetearTarjetaIlustrada();
-        // Cerramos también el modal de selección de método de pago anterior
         document.getElementById('modal-pago').style.display = 'none';
     }
 });
