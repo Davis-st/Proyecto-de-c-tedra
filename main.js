@@ -483,12 +483,10 @@ document.getElementById('btn-pago-tarjeta')?.addEventListener('click', () => {
 //CONTROL DE USUARIOS Y MENÚS
 
 document.getElementById('btn-registro-submit')?.addEventListener('click', async () => {
-    // 1. Capturar y limpiar valores de texto básicos
     const u = document.getElementById('reg-usuario').value.trim(); 
     const p = document.getElementById('reg-pass').value.trim();
     const r = document.getElementById('reg-rol').value;
 
-    // 2. Validar credenciales básicas
     if (u === "" || p === "") {
         return alert("⚠️ Por favor, ingresa un nombre de usuario y una contraseña.");
     }
@@ -497,15 +495,13 @@ document.getElementById('btn-registro-submit')?.addEventListener('click', async 
         return alert("⚠️ La contraseña debe tener al menos 4 caracteres por seguridad.");
     }
 
-    // 3. Validar Dirección según el Rol elegido
-    let d = 'Central Operativa'; // Valor por defecto si es repartidor/delivery
+    let d = 'Central Operativa'; 
 
     if (r === 'cliente') {
         const depto = document.getElementById('sel-depto').value;
         const muni = document.getElementById('sel-muni').value;
         const casa = document.getElementById('sel-casa').value;
 
-        // Validar que se haya seleccionado una opción real 
         if (!depto || depto === "" || depto.includes("Seleccionar")) {
             return alert("📍 Debes seleccionar un Departamento para tu entrega.");
         }
@@ -519,7 +515,6 @@ document.getElementById('btn-registro-submit')?.addEventListener('click', async 
         d = `${casa}, ${muni}, ${depto}`;
     }
 
-    // 4. Proceder con el registro en Supabase solo si pasó todos los filtros
     const { error } = await supabase.from('usuarios').insert([{ 
         usuario: u, 
         password: p, 
