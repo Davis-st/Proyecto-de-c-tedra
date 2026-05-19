@@ -1434,3 +1434,41 @@ input[type="checkbox"] {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 132, 255, 0.5) !important;
 }
+
+
+@media (max-width: 768px) {
+    
+    .tarjeta-comida {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        padding: 15px !important;
+        height: auto !important; 
+    }
+
+  
+    .tarjeta-comida img {
+        width: 100% !important;
+        max-width: 280px !important; 
+        height: 160px !important;   
+        object-fit: cover !important;
+        border-radius: 8px !important;
+        margin-bottom: 12px !important;
+    }
+
+    .info-comida, .detalles-comida {
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+
+
+    .tarjeta-comida button {
+        width: 80% !important; 
+        padding: 10px !important;
+        margin-top: 5px !important;
+    }
+}
