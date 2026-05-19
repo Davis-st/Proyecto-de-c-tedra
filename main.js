@@ -153,7 +153,7 @@ const datosDirecciones = {
     "Santa Ana": { "Santa Ana": 10, "Chalchuapa": 10, "Metapán": 10, "Coatepeque": 10 },
     "San Miguel": { "San Miguel": 10, "Ciudad Barrios": 10, "Chinameca": 10, "Nueva Guadalupe": 10 }
 };
-
+   
 function construirGrafoBase() {
     mapaCiudad.agregarNodo('Pizzeria La Toscana');
     mapaCiudad.agregarNodo('Burger House Gourmet');
