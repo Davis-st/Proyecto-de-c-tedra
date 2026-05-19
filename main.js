@@ -741,3 +741,4 @@ formPagoTarjeta.addEventListener('submit', async (e) => {
         document.getElementById('modal-pago').style.display = 'none';
     }
 });
+

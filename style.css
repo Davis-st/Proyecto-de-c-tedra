@@ -1434,3 +1434,89 @@ input[type="checkbox"] {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 132, 255, 0.5) !important;
 }
+
+
+/*Responsividad*/
+
+/* Para tablets */
+@media (max-width: 900px) {
+  #pantalla-dashboard {
+    flex-direction: column;
+    padding: 15px;
+    gap: 15px;
+  }
+  .sidebar {
+    width: 100%;
+    border-radius: 20px;
+    padding: 20px;
+    align-items: center;
+  }
+  #menu-cliente, #menu-delivery {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  .btn-nav {
+    width: auto;
+    flex: 1;
+    min-width: 140px;
+    text-align: center;
+  }
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+  .sidebar-logo-container img {
+    max-width: 150px !important;
+  }
+}
+
+/* Para telefonos */
+@media (max-width: 600px) {
+  .container {
+    min-height: 720px;
+  }
+  .form-content {
+    padding: 0 15px;
+  }
+  .overlay-panel {
+    padding: 0 10px;
+  }
+  h1 {
+    font-size: 1.4rem;
+  }
+  .modal-contenido, 
+  .modal-content-glass {
+    width: 95% !important;
+    max-width: 400px !important;
+    padding: 25px 20px !important;
+  }
+  .form-fila {
+    flex-direction: column;
+    gap: 0;
+  }
+  .tarjeta-contenedor {
+    height: 180px;
+  }
+  .tarjeta-numero {
+    font-size: 17px;
+  }
+  .tarjeta-comida {
+    flex-direction: column;
+    text-align: center;
+  }
+  .tarjeta-comida img {
+    width: 100%;
+    height: 140px;
+  }
+  .btn-agregar {
+    width: 100%;
+    height: 45px;
+    border-radius: 12px;
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
