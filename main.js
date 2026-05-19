@@ -367,12 +367,13 @@ async function renderizarPanelDelivery() {
     lista.innerHTML = "<p>Cargando pedidos de la base de datos...</p>";
 
     const { data } = await supabase.from('historialpedidos').select('*').eq('estado', 'Pendiente');
-    
+    colaCentral.cargarDesdeStorage([]);
+
     if (data && data.length > 0) {
         localStorage.setItem('colaCentral', JSON.stringify(data));
-        colaCentral.cargarDesdeStorage(data.map(p => ({ db_id: p.id, cliente: p.cliente, prioridad: p.prioridad, restaurante: p.restaurante, destino: p.destino })));
-    } else {
-        colaCentral.cargarDesdeStorage([]);
+        data.forEach(p => {
+            colaCentral.encolar({ db_id: p.id, cliente: p.cliente, prioridad: p.prioridad, restaurante: p.restaurante, destino: p.destino });
+        });
     }
 
     if (colaCentral.estaVacia()) return lista.innerHTML = "<p>No hay pedidos pendientes.</p>";

@@ -1,6 +1,6 @@
 export class ColaPedidos {
     constructor() {
-        this._items = []; // Encapsulamiento (privado)
+        this._items = []; // Encapsulamiento
     }
     
     encolar(ticket) {
